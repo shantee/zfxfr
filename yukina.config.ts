@@ -1,33 +1,33 @@
-import I18nKeys from "./src/locales/keys";
+import key from "./src/locales/keys";
 import type { Configuration } from "./src/types/config";
 
 const YukinaConfig: Configuration = {
-  title: "Yukina",
-  subTitle: "Yukina Template Demo Site",
-  brandTitle: "Yukina",
+  title: "ZFX",
+  subTitle: "machin truc",
+  brandTitle: "zFX",
 
   description: "Demo Site",
 
-  site: "https://yukina-blog.vercel.app",
+  site: "https://zfx.fr",
 
-  locale: "en", // set for website language and date format
+  locale: "fr", // set for website language and date format
 
   navigators: [
     {
-      nameKey: I18nKeys.nav_bar_home,
+      nameKey: key.nav_bar_home,
       href: "/",
     },
     {
-      nameKey: I18nKeys.nav_bar_archive,
+      nameKey: key.nav_bar_archive,
       href: "/archive",
     },
     {
-      nameKey: I18nKeys.nav_bar_about,
+      nameKey: key.nav_bar_about,
       href: "/about",
     },
     {
-      nameKey: I18nKeys.nav_bar_github,
-      href: "https://github.com/WhitePaper233/yukina",
+      nameKey: key.nav_bar_blog,
+      href: "/blog",
     },
   ],
 

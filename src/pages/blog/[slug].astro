@@ -1,0 +1,27 @@
+---
+import { getEntry, render } from "astro:content";
+export async function getStaticPaths() {
+  const { getCollection } = await import("astro:content");
+  const posts = await getCollection("post");
+  return posts.map(p => ({ params: { slug: p.slug } }));
+}
+const { slug } = Astro.params;
+const entry = await getEntry("post", slug!);
+const { Content } = await render(entry);
+export const prerender = true;
+---
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>{entry.data.title}</title>
+    <meta name="description" content={entry.data.description} />
+  </head>
+  <body>
+    <main class="container">
+      <a href="/blog">← Retour au blog</a>
+      <h1>{entry.data.title}</h1>
+      <p><small>{entry.data.date.toLocaleDateString("fr-FR")}</small></p>
+      <Content />
+    </main>
+  </body>
+</html>
