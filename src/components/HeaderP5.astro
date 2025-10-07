@@ -1,0 +1,132 @@
+---
+const poster = "/images/header-poster.webp"; // fallback si motion réduite
+---
+<section class="hero-anim" aria-label="Header animé p5">
+  <!-- Canvas p5 -->
+  <div id="p5-holder"></div>
+  <noscript><img src={poster} alt="" width="1920" height="1080" /></noscript>
+
+  <!-- Vagues Yukina au-dessus -->
+  <div class="waves" id="header-waves">
+    <svg
+      class="waves"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      viewBox="0 24 150 28"
+      preserveAspectRatio="none"
+      shape-rendering="auto"
+      aria-hidden="true"
+    >
+      <defs>
+        <path
+          id="gentle-wave"
+          d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z">
+        </path>
+      </defs>
+      <g class="parallax">
+        <use xlink:href="#gentle-wave" x="48" y="0"  class="opacity-25" style={{ animationDelay: "-2s", animationDuration: "7s" }} />
+        <use xlink:href="#gentle-wave" x="48" y="3"  class="opacity-50" style={{ animationDelay: "-3s", animationDuration: "10s" }} />
+        <use xlink:href="#gentle-wave" x="48" y="5"  class="opacity-75" style={{ animationDelay: "-4s", animationDuration: "13s" }} />
+        <use xlink:href="#gentle-wave" x="48" y="7"                      style={{ animationDelay: "-5s", animationDuration: "20s" }} />
+      </g>
+    </svg>
+  </div>
+
+  <!-- p5 depuis CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.3/lib/p5.min.js" defer></script>
+
+  <!-- sketch p5 en mode instance, dimensionné au conteneur -->
+  <script is:inline>
+    (function boot(){
+      if (!window.p5) return setTimeout(boot, 30);
+      const holder = document.getElementById('p5-holder');
+
+      const sketch = (s)=>{
+        let t = 0;
+        const DPR = Math.min(2, window.devicePixelRatio || 1);
+        function sizeToContainer(){
+          const r = holder.getBoundingClientRect();
+          s.pixelDensity(DPR);
+          s.resizeCanvas(Math.max(1, r.width|0), Math.max(1, r.height|0));
+        }
+        s.setup = () => {
+          const r = holder.getBoundingClientRect();
+          s.createCanvas(Math.max(1, r.width|0), Math.max(1, r.height|0)).parent(holder);
+          sizeToContainer();
+        };
+        s.windowResized = sizeToContainer;
+
+        s.draw = () => {
+          t += 0.01;
+          // fond dégradé
+          for(let y=0;y<s.height;y++){
+            const c = s.lerpColor(s.color('#043049ff'), s.color('#e400e4ff'), y/s.height);
+            s.stroke(c); s.line(0,y,s.width,y);
+          }
+          // vagues lumineuses
+          s.noFill(); s.stroke(255, 255, 255, 80); s.strokeWeight(2);
+          const rows = 3;
+          for(let j=0;j<rows;j++){
+            s.beginShape();
+            const amp = 10 + j*6;
+            const spd = 0.6 + j*0.2;
+            for(let x=0;x<=s.width;x+=12){
+              const y = s.height*0.55 + Math.sin((x*0.01)+(t*spd))*amp + Math.sin((x*0.03)-(t*0.7))*amp*0.4;
+              s.vertex(x, y);
+            }
+            s.endShape();
+          }
+          // petits points flottants
+          s.noStroke(); s.fill(255,220);
+          for(let i=0;i<40;i++){
+            const x = (i*37 + (t*60)) % (s.width+60) - 30;
+            const y = (i*53 % (s.height*0.7)) + 20 + Math.sin(t+i)*6;
+            s.circle(x, y, 2 + (i%3));
+          }
+        };
+      };
+
+      const inst = new p5(sketch, holder);
+      window.addEventListener('beforeunload', () => inst.remove());
+    })();
+  </script>
+</section>
+
+<style>
+/* Même gabarit que Banner (utilise --banner-height) */
+.hero-anim{
+  @apply relative w-full;
+  @apply h-[calc(var(--banner-height)*3/4)] lg:h-[var(--banner-height)];
+  overflow:hidden;
+}
+
+/* Canvas p5 derrière, plein conteneur */
+#p5-holder, #p5-holder canvas{
+  position:absolute; inset:0; display:block; width:100%; height:100%;
+  z-index:0;
+}
+
+/* Vagues Yukina au-dessus (mêmes classes que Banner) */
+.hero-anim .waves{
+  @apply absolute -bottom-[1px] h-[10vh] w-full md:h-[15vh];
+  max-height: 9.375rem; min-height: 3.125rem;
+  z-index:10; pointer-events:none;
+}
+
+.hero-anim .waves > .parallax use{
+  @apply fill-[var(--background-color)];
+  animation: wave 25s cubic-bezier(0.5, 0.5, 0.45, 0.5) infinite;
+}
+
+/* Keyframes identiques à Banner */
+@keyframes wave{
+  0%   { transform: translate3d(-90px, 0, 0); }
+  100% { transform: translate3d(85px, 0, 0); }
+}
+
+/* Accessibilité: fallback immobile */
+@media (prefers-reduced-motion: reduce){
+  #p5-holder{ display:none; }
+  .hero-anim{ background:url({poster}) center/cover no-repeat; }
+}
+</style>

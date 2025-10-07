@@ -1,0 +1,76 @@
+---
+import Base from "./BaseLayout.astro";
+import NavBar from "../components/NavBar.astro";
+import Banner from "../components/HeaderP5.astro";
+
+import YukinaConfig from "../../yukina.config";
+import Footer from "../components/Footer.astro";
+import SideBar from "../components/SideBar.astro";
+
+export interface Props {
+  title?: string;
+  subTitle?: string;
+  bannerImage?: string;
+  slug?: string;
+  bannerHeight?: string; 
+}
+
+const props = Astro.props;
+---
+
+<Base>
+  <NavBar />
+
+  {
+    YukinaConfig.bannerStyle == "LOOP" && (
+      <div style={`--banner-height:${props.bannerHeight ?? "40svh"}`}>
+        <Banner
+          title={props.title}
+          subTitle={props.subTitle}
+          bannerImage={props.bannerImage}
+          slug={props.slug}
+        />
+      </div>                                                          
+    )
+  }
+
+  <div class="main-container my-10">
+    <div class="flex flex-row items-start xl:space-x-4">
+
+      <div class="space-y-8">
+        <main class="content onload-animation">
+          <slot />
+        </main>
+        <Footer />
+      </div>
+    </div>
+  </div>
+</Base>
+
+<style>
+  /* Centre le bloc global sur TOUTES les largeurs + borne la largeur du site */
+  .main-container {
+    width: 100%;
+    max-width: var(--page-width-xl);
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  /* Centre l'enfant du flex (là où il y a <main> + <Footer>) */
+  .flex.flex-row.items-start {
+    justify-content: center;
+  }
+
+  .transition-leaving {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* IMPORTANT : on neutralise l’ancienne largeur liée à la sidebar */
+  .content {
+    width: 100% !important;
+    max-width: none !important;
+  }
+</style>
