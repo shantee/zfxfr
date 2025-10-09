@@ -35,7 +35,8 @@ const { time, wordCount } = props.readingMetadata;
     <img
       class="lozad absolute left-0 top-0 h-full w-full rounded-t-3xl object-cover lg:hidden"
       data-src={props.image ?? GetCoverURLForUnspecifiedEntry(entryID)}
-      alt="CoverPost"
+      alt={`${props.title}${props.category ? " — " + props.category : ""}`}
+      title={[props.category, props.title].filter(Boolean).join(" · ")}
     />
     <div class="absolute bottom-2 w-full">
       <div class="mx-2 flex flex-row justify-between">
@@ -66,7 +67,7 @@ const { time, wordCount } = props.readingMetadata;
     >
       <div class="flex w-full flex-row items-center">
         <div
-          class="mx-2 hidden h-6 w-1 translate-y-[1px] rounded-lg bg-[var(--primary-color)] lg:block"
+          class="mx-2 hidden h-6 w-1 translate-y-[1px] rounded-lg bg-[var(--primary-color)] lg:block decale15px"
         >
         </div>
         <a href={contentUrl} class="title">
@@ -105,7 +106,7 @@ const { time, wordCount } = props.readingMetadata;
               props.tags && (
                 <div class="data space-x-2">
                   <PostCardInfoIcon name="mdi:tag-outline" />
-                  <ul class="flex flex-row items-center space-x-1">
+                  <ul class="PostCardTags flex flex-row items-center space-x-1">
                     {props.tags.slice(0, 3).map((tag, index) => (
                       <li class="flex select-none flex-row items-center text-[var(--text-color-lighten)]">
                         {index > 0 && <span class="pr-1">/</span>}
@@ -149,7 +150,8 @@ const { time, wordCount } = props.readingMetadata;
         <img
           class="lozad h-[212px] w-[404px] select-none rounded-r-3xl object-cover dark:brightness-90"
           data-src={props.image ?? GetCoverURLForUnspecifiedEntry(entryID)}
-          alt="PostCover"
+           alt={`${props.title}${props.tags ? " — " + props.category : ""}`}
+  title={[props.category, props.title].filter(Boolean).join(" · ")}
         />
       </a>
     </div>
@@ -159,7 +161,7 @@ const { time, wordCount } = props.readingMetadata;
   .title {
     @apply flex w-full flex-row items-center space-x-1 align-top text-xl font-semibold text-[var(--text-color)] lg:text-2xl;
     @apply transition-all hover:text-[var(--primary-color)];
-    font-family: var(--primary-font);
+    font-family: var(--postcard-title);
   }
 
   .data {
@@ -211,4 +213,6 @@ const { time, wordCount } = props.readingMetadata;
   .cover-wrapper:hover .right-icon {
     clip-path: polygon(0 0, 100% 0%, 100% 100%, 0 100%);
   }
+  .PostCardTags {overflow: hidden; width: 192px;}
+  .decale15px {left: -8px; position: absolute;}
 </style>

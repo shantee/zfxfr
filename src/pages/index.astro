@@ -1,0 +1,26 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import { getCollection } from "astro:content";
+
+const all = await getCollection("posts", ({ data }) => !data.draft);
+const getTime = (d)=> new Date(d.published ?? d.date ?? d.publishDate ?? d.updated ?? 0).getTime();
+const posts = all.sort((a,b) => getTime(b.data) - getTime(a.data));
+
+const readMeta = (d) => {
+  const words = d.wordCount ?? d.readingTime?.words ?? 0;
+  const minutes = Math.max(1, Math.round(d.readingTime?.minutes ?? (words ? words/200 : 1)));
+  return { time: minutes, wordCount: words };
+};
+---
+
+<MainLayout bannerHeight="40svh" title="Accueil">
+  <section class="HomeLatest">
+   Welcome...To my lovely site !
+  </section>
+</MainLayout>
+
+<style>
+  .HomeLatest { width:100%; max-width:var(--page-width-xl); margin-inline:auto; padding-inline:16px; }
+  .list { display:grid; gap:2rem; }
+</style>

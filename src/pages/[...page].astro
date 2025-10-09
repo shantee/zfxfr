@@ -34,7 +34,7 @@ const { page } = Astro.props;
               category={entry.data.category}
               tags={entry.data.tags}
               description={entry.data.description}
-              image={entry.data.cover}
+              image={entry.data.image}
               readingMetadata={
                 (entry.rendered!.metadata as any).frontmatter.readingMetadata
               }
@@ -44,12 +44,13 @@ const { page } = Astro.props;
       }
     </div>
     <Pagination
-      class="onload-animation"
+     
+    class="onload-animation"
       lastPage={page.lastPage}
       current={page.currentPage}
       prevURL={page.url.prev}
       nextURL={page.url.next}
       style={`animation-delay: calc(var(--onload-animation-delay) + ${page.data.length + 1} * var(--onload-animation-interval));`}
-    />
+         />
   </div>
 </Main>

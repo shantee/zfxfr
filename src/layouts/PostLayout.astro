@@ -27,11 +27,13 @@ const {
 } = Astro.props;
 ---
 
-<Main title={title} subTitle={subTitle} bannerImage={bannerImage}>
+<Main title={title} subTitle={subTitle} bannerHeight="22vh">
   <!-- <Fragment set:html={tocHTMLString} /> -->
   <div class="article-wrapper">
     <div class="article">
       <Markdown>
+      <h1>{title}</h1>
+      
         <slot />
       </Markdown>
       {
@@ -56,5 +58,12 @@ const {
   .article {
     @apply flex flex-col;
     font-size: var(--primary-font);
+  }
+</style>
+<style is:global>
+  /* Ne s'applique que sur cette page car injecté ici */
+  .main-container > .flex.flex-row.items-start > .space-y-8 {
+    flex: 1 1 auto;
+    min-width: 0;
   }
 </style>

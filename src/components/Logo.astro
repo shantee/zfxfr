@@ -1,0 +1,87 @@
+---
+// Optionnel : tu peux passer le texte en prop si tu veux
+const { text = 'ZFX' } = Astro.props;
+---
+<span class="logo-city">{text}</span>
+
+<style>
+/* Style du logo */
+
+.logo-city{
+  display:inline-block;
+  font-family: var(--brand-font);
+  font-weight:900;
+  letter-spacing:.2em;
+  line-height:1;
+  /* taille = héritée du parent (NavBar). Si tu veux forcer : font-size:2rem; */
+  font-size:1.8rem;
+  animation: lights 5s 750ms linear infinite;
+  /* Couleur “de base” */
+  color: hsl(0, 0%, 100%);
+}
+.logo-city{
+  -webkit-text-stroke: 1.2px rgba(19, 6, 29, 0.712); /* Chrome/Edge/Safari */
+  text-stroke: 1.2px rgba(19, 6, 29, 0.712);         /* futur/expérimental */
+}
+.logo-city{ position:relative }
+.logo-city::before{
+  content: attr(data-text);
+  position:absolute; inset:0;
+  color: transparent;
+  -webkit-text-stroke: 1.2px rgba(0,0,0,.65);
+  /* si -webkit-text-stroke n'est pas dispo, simule le contour : */
+  text-shadow:
+    1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000,
+    1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
+  pointer-events:none;
+}
+
+/* Respecte l’accessibilité */
+@media (prefers-reduced-motion: reduce){
+  .logo-city{ animation:none; text-shadow:none; }
+}
+
+/* Keyframes adaptés du CodePen */
+@keyframes lights{
+  0%{
+    color:hsl(230 40% 80%);
+    text-shadow:
+      0 0 1em hsla(295, 100%, 50%, 0.733),
+      0 0 .125em hsla(197, 100%, 50%, 0.651),
+      -1em -.125em .5em hsla(40, 100%, 50%, 0.877),
+      1em  .125em .5em hsla(293, 94%, 31%, 0.767);
+  }
+  30%{
+    color:hsl(230 80% 90%);
+    text-shadow:
+      0 0 1em    hsla(320 100% 50% / .5),
+      0 0 .125em hsla(320 100% 60% / .5),
+      -.5em -.125em .25em hsla(40 100% 60% / .2),
+       .5em  .125em .25em hsla(200 100% 60% / .4);
+  }
+  40%{
+    color:hsl(230 100% 95%);
+    text-shadow:
+      0 0 1em    hsla(320 100% 50% / .5),
+      0 0 .125em hsla(320 100% 90% / .5),
+      -.25em -.125em .125em hsla(40 100% 60% / .2),
+       .25em  .125em .125em hsla(200 100% 60% / .4);
+  }
+  70%{
+    color:hsl(230 80% 90%);
+    text-shadow:
+      0 0 1em    hsla(320 100% 50% / .5),
+      0 0 .125em hsla(320 100% 60% / .5),
+       .5em -.125em .25em hsla(40 100% 60% / .2),
+      -.5em  .125em .25em hsla(200 100% 60% / .4);
+  }
+  100%{
+    color:hsl(230 40% 80%);
+    text-shadow:
+      0 0 1em    hsla(320 100% 50% / .2),
+      0 0 .125em hsla(320 100% 60% / .3),
+       1em -.125em .5em hsla(40 100% 60% / 0),
+      -1em  .125em .5em hsla(200 100% 60% / 0);
+  }
+}
+</style>

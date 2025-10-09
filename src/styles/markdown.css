@@ -37,6 +37,7 @@
   content: " ";
   background-color: var(--primary-color);
   top: 2.5px;
+  left: -15px;
   bottom: 3px;
   width: 0.3rem;
   border-radius: 4px;

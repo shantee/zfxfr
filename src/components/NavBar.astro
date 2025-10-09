@@ -1,11 +1,10 @@
 ---
 import YukinaConfig from "../../yukina.config";
+import Logo from "../components/Logo.astro";
 import { i18n } from "../locales/translation";
 
 import { Icon } from "astro-icon/components";
-import SearchBar from "./SearchBar.svelte";
-import MobileSearchBar from "./MobileSearchBar.svelte";
-import "astro-pagefind";
+
 
 const navCount = YukinaConfig.navigators.length;
 ---
@@ -38,9 +37,8 @@ const navCount = YukinaConfig.navigators.length;
       </a>
     </div>
     <a class="brand-lg" href="/">
-      <div class="title space-x-2">
-        <Icon name="heroicons:home" size={32} />
-        <p>{YukinaConfig.brandTitle}</p>
+      <div class="title space-x-2 brand-logo">
+      <Logo text="ZFX" width="8.5rem" height="3.25rem" />
       </div>
     </a>
     <div class="menu">
@@ -207,11 +205,11 @@ const navCount = YukinaConfig.navigators.length;
 
  box-shadow:
     /* fin liseré bleu proche du bord */
-    0 0 0 1px rgba(102, 170, 255, 0.55),
+    0 0 0 1px rgba(66, 151, 207, 0.55),
 
     /* halo bleu global, proche + lointain */
     0 0 12px rgba(102, 170, 255, 0.50),
-    0 0 28px rgba(102, 170, 255, 0.35),
+    0 0 28px rgba(122, 25, 160, 0.35),
 
     /* cyan qui “déborde” un peu à droite */
     6px 0 18px rgba(0, 195, 255, 0.55),
@@ -230,7 +228,87 @@ const navCount = YukinaConfig.navigators.length;
     -7px 0 20px rgba(255, 0, 242, 0.55);
 }
 
-.nav { backdrop-filter: blur(6px); }
+.nav { backdrop-filter: blur(6px); z-index: 9999999; }
+/* Scope desktop: dans la barre de marque */
+.brand-lg .title { position: relative; display: flex; align-items: center; }
+
+.logo-glitch {
+  position: relative;
+  display: inline-block;
+  font-weight: 800;
+  letter-spacing: .06em;
+  color: var(--text-color);          /* couleur “de base” */
+  line-height: 1;
+}
+
+/* Couches décalées R/G/B façon glitch */
+.logo-glitch::before,
+.logo-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.logo-glitch::before {
+  left: -2px;
+  text-shadow: -3px 0 magenta;
+  animation: noise-1 2.2s linear infinite alternate, glitch-jump 5s infinite 4s;
+}
+.logo-glitch::after {
+  left:  2px;
+  text-shadow: 3px 0 cyan;
+  animation: noise-2 2.2s linear infinite alternate, glitch-jump 5s infinite 4s;
+}
+
+/* Halo doux optionnel */
+.logo-glow{
+  position:absolute; inset:0;
+  color: transparent;
+  text-shadow: 0 0 16px var(--primary-color);
+  pointer-events:none;
+}
+
+/* Petit "sursaut" ponctuel */
+@keyframes glitch-jump {
+  0%,1% { transform: skewX(0deg) }
+  1.4%  { transform: skewX(70deg) }
+  2.2%  { transform: skewX(0deg) }
+}
+
+/* Bandes aléatoires (version CSS pure du SCSS du Pen) */
+@keyframes noise-1 {
+  0%   { clip-path: inset(10% 0 82% 0) }
+  10%  { clip-path: inset(65% 0 22% 0) }
+  20%  { clip-path: inset(5% 0 80% 0) }
+  30%  { clip-path: inset(35% 0 50% 0) }
+  40%  { clip-path: inset(75% 0 10% 0) }
+  50%  { clip-path: inset(20% 0 60% 0) }
+  60%  { clip-path: inset(55% 0 25% 0) }
+  70%  { clip-path: inset(15% 0 70% 0) }
+  80%  { clip-path: inset(40% 0 38% 0) }
+  90%  { clip-path: inset(8% 0 84% 0) }
+  100% { clip-path: inset(60% 0 18% 0) }
+}
+@keyframes noise-2 {
+  0%   { clip-path: inset(60% 0 18% 0) }
+  10%  { clip-path: inset(12% 0 80% 0) }
+  20%  { clip-path: inset(48% 0 40% 0) }
+  30%  { clip-path: inset(22% 0 66% 0) }
+  40%  { clip-path: inset(70% 0 12% 0) }
+  50%  { clip-path: inset(30% 0 50% 0) }
+  60%  { clip-path: inset(8% 0 84% 0) }
+  70%  { clip-path: inset(52% 0 30% 0) }
+  80%  { clip-path: inset(18% 0 72% 0) }
+  90%  { clip-path: inset(42% 0 38% 0) }
+  100% { clip-path: inset(5% 0 85% 0) }
+}
+
+/* Respecte les préférences d’accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .logo-glitch::before, .logo-glitch::after, .logo-glow { animation: none !important; text-shadow: none; }
+}
+
 </style>
 
 <script>
@@ -346,7 +424,7 @@ const navCount = YukinaConfig.navigators.length;
 
   // fold nav bar when scroll down
   const navBarElement = document.getElementById("nav");
-  const bannerElement = document.getElementById("banner");
+  const bannerElement = document.getElementById("p5-holder");
   const bannerHeight = bannerElement!.offsetHeight - 50;
   let lastYPos = 0;
   window.addEventListener("scroll", () => {
@@ -359,16 +437,3 @@ const navCount = YukinaConfig.navigators.length;
   });
 </script>
 
-<script is:inline>
-  // load pagefind
-  async function loadPagefind() {
-    const pagefind = await import("/pagefind/pagefind.js");
-    await pagefind.options({
-      excerptLength: 20,
-    });
-    pagefind.init();
-    window.pagefind = pagefind;
-    pagefind.search("");
-  }
-  loadPagefind();
-</script>

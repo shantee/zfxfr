@@ -11,3 +11,9 @@ const archiveMap = await GetArchives();
   archiveMap={archiveMap}
   title={i18n(I18nKeys.pages_archive_archive)}
 />
+<style is:global>
+  .main-container > .flex.flex-row.items-start > .space-y-8 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+</style>
