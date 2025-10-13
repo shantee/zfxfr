@@ -2,11 +2,13 @@
 import YukinaConfig from "../../yukina.config";
 import Logo from "../components/Logo.astro";
 import { i18n } from "../locales/translation";
-
 import { Icon } from "astro-icon/components";
 
-
-const navCount = YukinaConfig.navigators.length;
+// ⚠️ navCount doit compter les enfants pour la hauteur du menu mobile
+const navCount = YukinaConfig.navigators.reduce(
+  (acc: number, nav: any) => acc + 1 + ((nav.children?.length) ?? 0),
+  0
+);
 ---
 
 <nav class="nav" id="nav">
@@ -33,25 +35,48 @@ const navCount = YukinaConfig.navigators.length;
         />
       </button>
       <a class="title" href="/">
-        {YukinaConfig.brandTitle}
+          <Logo text="ZFX"/>
       </a>
     </div>
-    <a class="brand-lg" href="/">
+
+    <a class="brand-lg" title="réparation , dépannage informatique et coaching digital" href="/">
       <div class="title space-x-2 brand-logo">
-      <Logo text="ZFX" width="8.5rem" height="3.25rem" />
+        <Logo text="ZFX"/>
       </div>
     </a>
+
+    <!-- ======= DESKTOP MENU ======= -->
     <div class="menu">
       {
         YukinaConfig.navigators.map((nav) => (
-          <a href={nav.href}>
-            <p>{i18n(nav.nameKey)}</p>
-          </a>
+          nav.children?.length ? (
+            <div class="menu-group">
+              <a href={nav.href} class="menu-parent">
+                <p>{i18n(nav.nameKey)}</p>
+                <Icon name="cuida:caret-down-outline" class="ml-1 text-[var(--text-color-lighten)]" />
+              </a>
+              <ul class="submenu" role="menu">
+                {
+                  nav.children.map((child) => (
+                    <li>
+                      <a class="submenu-link" href={child.href} role="menuitem">
+                        {i18n(child.nameKey)}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+          ) : (
+            <a href={nav.href} class="">
+              <p>{i18n(nav.nameKey)}</p>
+            </a>
+          )
         ))
       }
     </div>
-    <div class="toolbar">
 
+    <div class="toolbar">
       <div class="theme">
         <button type="button" id="theme-switcher">
           <Icon
@@ -70,13 +95,46 @@ const navCount = YukinaConfig.navigators.length;
       </div>
     </div>
   </div>
+
+  <!-- ======= MOBILE MENU ======= -->
   <div id="mobile-menu" class="px-3 transition-all">
-    <ul
-      id="mobile-menu-nav"
-      class="mobile-menu-nav mobile-menu-nav-closed flex flex-col space-y-6 overflow-hidden text-xl font-medium text-[var(--text-color)] transition-all duration-300"
-    >
-      {
-        YukinaConfig.navigators.map((nav) => (
+  <ul
+    id="mobile-menu-nav"
+    class="mobile-menu-nav mobile-menu-nav-closed flex flex-col space-y-6 overflow-hidden text-xl font-medium text-[var(--text-color)] transition-all duration-300"
+  >
+    {
+      YukinaConfig.navigators.map((nav) => (
+        nav.children?.length ? (
+          <li class="mt-1">
+        
+            <a href={nav.href} class="mobile-nav-item">
+              <div class="flex flex-row items-center space-x-2">
+                <span class="text-[var(--primary-color)]">·</span>
+                <span>{i18n(nav.nameKey)}</span>
+              </div>
+              <Icon
+                name="cuida:caret-right-outline"
+                class="text-[var(--text-color-lighten)]"
+              />
+            </a>
+            <ul class="mt-3 ml-6 space-y-4">
+              {
+                nav.children.map((child) => (
+                  <li>
+                    <!-- garder la classe mobile-nav-item pour fermer le menu au clic -->
+                    <a href={child.href} class="mobile-nav-item flex flex-row items-center justify-between">
+                      <div class="flex flex-row items-center space-x-2">
+                        <span class="opacity-60">•</span>
+                        <span>{i18n(child.nameKey)}</span>
+                      </div>
+                      <Icon name="cuida:caret-right-outline" class="text-[var(--text-color-lighten)]" />
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </li>
+        ) : (
           <li class="mt-1">
             <a href={nav.href} class="mobile-nav-item">
               <div class="flex flex-row items-center space-x-2">
@@ -89,10 +147,12 @@ const navCount = YukinaConfig.navigators.length;
               />
             </a>
           </li>
-        ))
-      }
-    </ul>
-  </div>
+        )
+      ))
+    }
+  </ul>
+</div>
+
 </nav>
 
 <style define:vars={{ navCount }}>
@@ -121,10 +181,6 @@ const navCount = YukinaConfig.navigators.length;
     @apply hover:bg-[var(--primary-color-hover)] hover:text-[var(--primary-color)];
   }
 
-  .brand .icon {
-    @apply w-full text-center text-2xl;
-  }
-
   .brand-lg {
     @apply hidden h-[3.25rem] rounded-lg px-5 font-medium transition-all;
     @apply lg:block;
@@ -146,294 +202,173 @@ const navCount = YukinaConfig.navigators.length;
     @apply lg:flex;
   }
 
+  /* Liens de niveau 1 */
   .menu a {
     @apply flex h-[3.25rem] items-center rounded-lg px-6 transition-all;
     @apply hover:bg-[var(--primary-color-hover)] hover:text-[var(--primary-color)];
     @apply active:scale-95;
   }
+  .menu p { @apply font-medium leading-normal; font-family: var(--primary-font); }
 
-  .menu p {
-    @apply font-medium leading-normal;
-    font-family: var(--primary-font);
+  /* Groupe dropdown desktop */
+  .menu-group { @apply relative; }
+  .menu-parent { @apply flex items-center; }
+
+/* remplace ton bloc existant */
+.submenu {
+  @apply absolute left-0 min-w-[12rem] rounded-lg border text-base;
+border-color: #72a9ff;
+  background: rgba(245, 245, 245, 0.98);
+  box-shadow: 4px 8px 10px rgba(28, 110, 198, 0.47);
+  display: none;
+  z-index: 50;
+  padding: .35rem 0;
+
+  /* important : plus de marge verticale, on colle sous le parent */
+  margin-top: 0;            /* <- enlève l’effet de mt-1 */
+  top: calc(100% + 6px);    /* petit offset propre, sans créer de “trou” */
+}
+
+  .submenu .submenu-link {
+    @apply block px-4 py-2 whitespace-nowrap transition-all;
   }
-
-  .toolbar {
-    @apply flex flex-row items-center justify-end space-x-1 lg:mr-2;
+  .submenu .submenu-link:hover {
+    @apply bg-[var(--primary-color-hover)] text-[var(--primary-color)];
   }
+.menu-group { position: relative; }
+.menu-group::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  top: 100%;
+  height: 10px;           /* zone tampon invisible */
+}
+  /* Affichage au survol / focus */
+  .menu-group:hover > .submenu,
+  .menu-group:focus-within > .submenu { display: block; }
 
+  .toolbar { @apply flex flex-row items-center justify-end space-x-1 lg:mr-2; }
   .toolbar button {
     @apply flex w-11 justify-center rounded-lg py-2 text-[var(--text-color)] transition-all;
     @apply hover:bg-[var(--primary-color-hover)] hover:text-[var(--primary-color)];
   }
+  .toolbar .icon { @apply stroke-2 text-xl; }
 
-  .toolbar .icon {
-    @apply stroke-2 text-xl;
-  }
+  .mobile-menu-nav-closed { @apply h-0 opacity-0; }
+  .mobile-menu-nav-opened { @apply opacity-100; height: calc(var(--navCount) * 52px); }
 
-  .mobile-menu-nav-closed {
-    @apply h-0 opacity-0;
-  }
+  .mobile-menu-nav li a { @apply flex flex-row items-center justify-between; font-family: var(--primary-font); }
 
-  .mobile-menu-nav-opened {
-    @apply opacity-100;
-    height: calc(var(--navCount) * 52px);
-  }
+  /* Accordéon mobile */
+details.mobile-dropdown > summary { /* ... */ }
+details.mobile-dropdown > summary::-webkit-details-marker { display: none; }
+details.mobile-dropdown[open] .rotate-indicator { transform: rotate(90deg); transition: transform .2s; }
 
-  .mobile-menu-nav li a {
-    @apply flex flex-row items-center justify-between;
-    font-family: var(--primary-font);
-  }
 
   @keyframes nav-onload-animation {
-    0% {
-      transform: translateY(-5rem) translateX(-50%);
-      opacity: 0;
-    }
-    100% {
-      transform: translateY(0) translateX(-50%);
-      opacity: 1;
-    }
+    0% { transform: translateY(-5rem) translateX(-50%); opacity: 0; }
+    100% { transform: translateY(0) translateX(-50%); opacity: 1; }
   }
 
-  /* Halo très simple sur la barre */
-.nav {
-  /* couleur du halo — tu peux mettre n’importe quelle couleur ici */
-  --halo: var(--primary-color);
+  /* Halo & glitch (inchangés) */
+  .nav {
+    --halo: var(--primary-color);
+    border-radius: 16px;
+    background-clip: padding-box;
+    box-shadow:
+      0 0 0 1px rgba(66, 151, 207, 0.55),
+      0 0 12px rgba(102, 170, 255, 0.50),
+      0 0 28px rgba(122, 25, 160, 0.35),
+      6px 0 18px rgba(0, 195, 255, 0.55),
+      -6px 0 18px rgba(255, 0, 242, 0.45);
+  }
+  .nav:hover, .nav:focus-within {
+    box-shadow:
+      0 0 0 1px rgba(102, 170, 255, 0.65),
+      0 0 14px rgba(102, 170, 255, 0.60),
+      0 0 34px rgba(102, 170, 255, 0.45),
+      7px 0 20px rgba(0, 195, 255, 0.65),
+      -7px 0 20px rgba(255, 0, 242, 0.55);
+  }
+  .nav { backdrop-filter: blur(6px); z-index: 9999999; }
 
-  border-radius: 16px;           /* arrondis propres (si déjà présents, garde) */
-  background-clip: padding-box;  /* évite les bavures sur la bordure */
-
- box-shadow:
-    /* fin liseré bleu proche du bord */
-    0 0 0 1px rgba(66, 151, 207, 0.55),
-
-    /* halo bleu global, proche + lointain */
-    0 0 12px rgba(102, 170, 255, 0.50),
-    0 0 28px rgba(122, 25, 160, 0.35),
-
-    /* cyan qui “déborde” un peu à droite */
-    6px 0 18px rgba(0, 195, 255, 0.55),
-
-    /* magenta qui “déborde” un peu à gauche */
-    -6px 0 18px rgba(255, 0, 242, 0.45);
-}
-
-.nav:hover,
-.nav:focus-within {
-  box-shadow:
-    0 0 0 1px rgba(102, 170, 255, 0.65),
-    0 0 14px rgba(102, 170, 255, 0.60),
-    0 0 34px rgba(102, 170, 255, 0.45),
-    7px 0 20px rgba(0, 195, 255, 0.65),
-    -7px 0 20px rgba(255, 0, 242, 0.55);
-}
-
-.nav { backdrop-filter: blur(6px); z-index: 9999999; }
-/* Scope desktop: dans la barre de marque */
-.brand-lg .title { position: relative; display: flex; align-items: center; }
-
-.logo-glitch {
-  position: relative;
-  display: inline-block;
-  font-weight: 800;
-  letter-spacing: .06em;
-  color: var(--text-color);          /* couleur “de base” */
-  line-height: 1;
-}
-
-/* Couches décalées R/G/B façon glitch */
-.logo-glitch::before,
-.logo-glitch::after {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.logo-glitch::before {
-  left: -2px;
-  text-shadow: -3px 0 magenta;
-  animation: noise-1 2.2s linear infinite alternate, glitch-jump 5s infinite 4s;
-}
-.logo-glitch::after {
-  left:  2px;
-  text-shadow: 3px 0 cyan;
-  animation: noise-2 2.2s linear infinite alternate, glitch-jump 5s infinite 4s;
-}
-
-/* Halo doux optionnel */
-.logo-glow{
-  position:absolute; inset:0;
-  color: transparent;
-  text-shadow: 0 0 16px var(--primary-color);
-  pointer-events:none;
-}
-
-/* Petit "sursaut" ponctuel */
-@keyframes glitch-jump {
-  0%,1% { transform: skewX(0deg) }
-  1.4%  { transform: skewX(70deg) }
-  2.2%  { transform: skewX(0deg) }
-}
-
-/* Bandes aléatoires (version CSS pure du SCSS du Pen) */
-@keyframes noise-1 {
-  0%   { clip-path: inset(10% 0 82% 0) }
-  10%  { clip-path: inset(65% 0 22% 0) }
-  20%  { clip-path: inset(5% 0 80% 0) }
-  30%  { clip-path: inset(35% 0 50% 0) }
-  40%  { clip-path: inset(75% 0 10% 0) }
-  50%  { clip-path: inset(20% 0 60% 0) }
-  60%  { clip-path: inset(55% 0 25% 0) }
-  70%  { clip-path: inset(15% 0 70% 0) }
-  80%  { clip-path: inset(40% 0 38% 0) }
-  90%  { clip-path: inset(8% 0 84% 0) }
-  100% { clip-path: inset(60% 0 18% 0) }
-}
-@keyframes noise-2 {
-  0%   { clip-path: inset(60% 0 18% 0) }
-  10%  { clip-path: inset(12% 0 80% 0) }
-  20%  { clip-path: inset(48% 0 40% 0) }
-  30%  { clip-path: inset(22% 0 66% 0) }
-  40%  { clip-path: inset(70% 0 12% 0) }
-  50%  { clip-path: inset(30% 0 50% 0) }
-  60%  { clip-path: inset(8% 0 84% 0) }
-  70%  { clip-path: inset(52% 0 30% 0) }
-  80%  { clip-path: inset(18% 0 72% 0) }
-  90%  { clip-path: inset(42% 0 38% 0) }
-  100% { clip-path: inset(5% 0 85% 0) }
-}
-
-/* Respecte les préférences d’accessibilité */
-@media (prefers-reduced-motion: reduce) {
-  .logo-glitch::before, .logo-glitch::after, .logo-glow { animation: none !important; text-shadow: none; }
-}
-
+  .brand-lg .title { position: relative; display: flex; align-items: center; }
+   .title{overflow: visible !important;}
 </style>
 
 <script>
-  /**
-   * Reinitializes an SVG icon by cloning it and replacing the original icon with the clone.
-   *
-   * @param icon - The SVG element to be reinitialized.
-   * @returns The cloned SVG element that replaced the original.
-   */
-  const reinitializeIcon = (icon: SVGElement) => {
-    const cloned = icon.cloneNode(true) as SVGElement;
+  /* (script d’origine inchangé) */
+  const reinitializeIcon = (icon) => {
+    const cloned = icon.cloneNode(true);
     icon.parentNode?.replaceChild(cloned, icon);
     return cloned;
   };
 
-  // get elements
-  const menuSwitcher = document.getElementById(
-    "menu-switcher",
-  ) as HTMLButtonElement;
-  const mobileMenuNav = document.getElementById(
-    "mobile-menu-nav",
-  ) as HTMLUListElement;
+  const menuSwitcher = document.getElementById("menu-switcher");
+  const mobileMenuNav = document.getElementById("mobile-menu-nav");
   const mobileMenuNavItems = document.getElementsByClassName("mobile-nav-item");
-  let menuIconClosed = document.getElementById(
-    "menu-icon-closed",
-  ) as any as SVGElement;
-  let menuIconOpened = document.getElementById(
-    "menu-icon-opened",
-  ) as any as SVGElement;
-
-  // menu state
+  let menuIconClosed = document.getElementById("menu-icon-closed");
+  let menuIconOpened = document.getElementById("menu-icon-opened");
   let isMenuOpen = false;
 
-  // switch menu open / close
   const switchMenuState = () => {
     menuIconClosed.style.display = isMenuOpen ? "block" : "none";
     menuIconOpened.style.display = !isMenuOpen ? "block" : "none";
     if (isMenuOpen) menuIconClosed = reinitializeIcon(menuIconClosed);
     else menuIconOpened = reinitializeIcon(menuIconOpened);
     if (isMenuOpen) {
-      mobileMenuNav.classList.replace(
-        "mobile-menu-nav-opened",
-        "mobile-menu-nav-closed",
-      );
+      mobileMenuNav.classList.replace("mobile-menu-nav-opened","mobile-menu-nav-closed");
     } else {
-      mobileMenuNav.classList.replace(
-        "mobile-menu-nav-closed",
-        "mobile-menu-nav-opened",
-      );
+      mobileMenuNav.classList.replace("mobile-menu-nav-closed","mobile-menu-nav-opened");
     }
     isMenuOpen = !isMenuOpen;
   };
 
-  // click menu item then close menu
   menuSwitcher.addEventListener("click", switchMenuState);
   for (let i = 0; i < mobileMenuNavItems.length; ++i) {
     mobileMenuNavItems.item(i)?.addEventListener("click", switchMenuState);
   }
-  // click other elements then close menu
   document.addEventListener("click", (event) => {
-    if (
-      !menuSwitcher.contains(event.target as any) &&
-      !mobileMenuNav.contains(event.target as any) &&
-      isMenuOpen
-    ) {
+    if (!menuSwitcher.contains(event.target) && !mobileMenuNav.contains(event.target) && isMenuOpen) {
       switchMenuState();
     }
   });
 
-  // Theme switcher
-  // Get elements
-  const themeSwitcher = document.getElementById(
-    "theme-switcher",
-  ) as HTMLButtonElement;
-  let themeIconLight = document.getElementById(
-    "theme-icon-light",
-  ) as any as SVGElement;
-  let themeIconDark = document.getElementById(
-    "theme-icon-dark",
-  ) as any as SVGElement;
-
-  // Record the current theme
+  const themeSwitcher = document.getElementById("theme-switcher");
+  let themeIconLight = document.getElementById("theme-icon-light");
+  let themeIconDark = document.getElementById("theme-icon-dark");
   let currentTheme = localStorage.getItem("theme") || "light";
 
-  // Set theme
-  const setTheme = (theme: string) => {
+  const setTheme = (theme) => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
     currentTheme = theme;
-
-    // Show/hide icons for different themes
     themeIconDark.style.display = theme === "dark" ? "block" : "none";
     themeIconLight.style.display = theme === "light" ? "block" : "none";
-
-    // If the theme is dark, update the dark icon; otherwise, update the light icon
     if (theme === "dark") themeIconDark = reinitializeIcon(themeIconDark);
     else themeIconLight = reinitializeIcon(themeIconLight);
-
-    // Toggle dark class
     document.documentElement.classList.toggle("dark", theme === "dark");
   };
 
-  // Click to switch theme
   themeSwitcher.addEventListener("click", () => {
     setTheme(currentTheme === "light" ? "dark" : "light");
   });
 
-  // Initialize
   document.addEventListener("DOMContentLoaded", () => {
     setTheme(currentTheme);
     menuIconClosed.style.display = "block";
   });
 
-  // fold nav bar when scroll down
   const navBarElement = document.getElementById("nav");
   const bannerElement = document.getElementById("p5-holder");
-  const bannerHeight = bannerElement!.offsetHeight - 50;
+  const bannerHeight = bannerElement?.offsetHeight ? (bannerElement.offsetHeight - 50) : 200;
   let lastYPos = 0;
   window.addEventListener("scroll", () => {
     if (bannerHeight < window.scrollY && window.scrollY > lastYPos) {
-      navBarElement!.style.top = "-72px";
+      navBarElement.style.top = "-72px";
     } else {
-      navBarElement!.style.top = "0";
+      navBarElement.style.top = "0";
     }
     lastYPos = window.scrollY;
   });
 </script>
-

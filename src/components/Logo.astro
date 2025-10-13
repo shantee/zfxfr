@@ -1,87 +1,112 @@
 ---
-// Optionnel : tu peux passer le texte en prop si tu veux
+// Props : texte personnalisable (par défaut 'ZFX')
 const { text = 'ZFX' } = Astro.props;
 ---
-<span class="logo-city">{text}</span>
+<span class="logo-sweet" data-text={text}>{text}</span>
 
 <style>
-/* Style du logo */
 
-.logo-city{
-  display:inline-block;
-  font-family: var(--brand-font);
-  font-weight:900;
-  letter-spacing:.2em;
-  line-height:1;
-  /* taille = héritée du parent (NavBar). Si tu veux forcer : font-size:2rem; */
-  font-size:1.8rem;
-  animation: lights 5s 750ms linear infinite;
-  /* Couleur “de base” */
-  color: hsl(0, 0%, 100%);
+
+.logo-sweet{
+position: relative;
+  display: inline-block;
+  line-height: 0.85;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 2.7rem;
+  font-family: var(--brand-font, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, sans-serif);
+  -webkit-text-stroke: 1.2px rgba(255, 255, 255, 0.82);
+  text-stroke: 1.2px rgba(0,0,0,.65);
+  color: #fde9ff;
+  text-shadow: 3px 1px 1px #4af7ff,2px 2px 1px #165bfb,4px 2px 1px #4af7ff,3px 3px 1px #165bfb,5px 3px 1px #4af7ff,4px 4px 1px #165bfb,6px 4px 1px #4af7ff,5px 5px 1px #165bfb,7px 5px 1px #4af7ff,6px 6px 1px #165bfb,8px 6px 1px #4af7ff,7px 7px 1px #165bfb,9px 7px 1px #4af7ff;
+  left: -15px;
+  overflow: visible !important;
 }
-.logo-city{
-  -webkit-text-stroke: 1.2px rgba(19, 6, 29, 0.712); /* Chrome/Edge/Safari */
-  text-stroke: 1.2px rgba(19, 6, 29, 0.712);         /* futur/expérimental */
+
+/* Double “chromatique” au-dessus (rose/violet), comme le Pen d’origine */
+.logo-sweet::before{
+content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  color: #bc62e6c7;
+  z-index: -999999;
+  text-shadow: 2px 2px 1px #fff,-1px -1px 1px #c736f9,-2px 2px 1px #fff,1px -1px 1px #35ffff;
 }
-.logo-city{ position:relative }
-.logo-city::before{
+
+/* GLOW ANIMÉ isolé sur ::after pour garder le texte net */
+.logo-sweet::after{
   content: attr(data-text);
-  position:absolute; inset:0;
-  color: transparent;
-  -webkit-text-stroke: 1.2px rgba(0,0,0,.65);
-  /* si -webkit-text-stroke n'est pas dispo, simule le contour : */
-  text-shadow:
-    1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000,
-    1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
-  pointer-events:none;
+  position: absolute; inset: 0;
+  pointer-events: none;
+  /* La couleur est animée via les keyframes */
+  color: hsl(230 40% 80%);
+  filter: blur(.6px); /* petit flou pour “halation” douce */
+  animation: logoGlow 5s .75s linear infinite;
+  z-index: -999;
 }
 
-/* Respecte l’accessibilité */
+/* Fallback si -webkit-text-stroke indispo : petit halo noir multi-directions */
+@supports not (-webkit-text-stroke: 1px black){
+  .logo-sweet{
+    text-shadow:
+      1px 0 0 #000, -1px 0 0 #000, 0 1px 0 #000, 0 -1px 0 #000,
+      1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000,
+      /* puis on réinjecte la pile “Sweet” par-dessus */
+      3px 1px 1px #4af7ff, 2px 2px 1px #165bfb, 4px 2px 1px #4af7ff,
+      3px 3px 1px #165bfb, 5px 3px 1px #4af7ff, 4px 4px 1px #165bfb,
+      6px 4px 1px #4af7ff, 5px 5px 1px #165bfb, 7px 5px 1px #4af7ff,
+      6px 6px 1px #165bfb, 8px 6px 1px #4af7ff, 7px 7px 1px #165bfb,
+      9px 7px 1px #4af7ff;
+  }
+}
+
+/* Accessibilité : réduit la motion si demandé */
 @media (prefers-reduced-motion: reduce){
-  .logo-city{ animation:none; text-shadow:none; }
+  .logo-sweet::after{ animation: none }
 }
 
-/* Keyframes adaptés du CodePen */
-@keyframes lights{
+/* Keyframes du glow (reprend ton ancien “lights” en version dédiée au halo) */
+@keyframes logoGlow{
   0%{
     color:hsl(230 40% 80%);
     text-shadow:
-      0 0 1em hsla(295, 100%, 50%, 0.733),
-      0 0 .125em hsla(197, 100%, 50%, 0.651),
-      -1em -.125em .5em hsla(40, 100%, 50%, 0.877),
-      1em  .125em .5em hsla(293, 94%, 31%, 0.767);
+      0 0 1em hsla(295,100%,50%,.73),
+      0 0 .125em hsla(197,100%,50%,.65),
+      -1em -.125em .5em hsla(40,100%,50%,.88),
+       1em  .125em .5em hsla(293,94%,31%,.77);
   }
   30%{
     color:hsl(230 80% 90%);
     text-shadow:
-      0 0 1em    hsla(320 100% 50% / .5),
-      0 0 .125em hsla(320 100% 60% / .5),
-      -.5em -.125em .25em hsla(40 100% 60% / .2),
-       .5em  .125em .25em hsla(200 100% 60% / .4);
+      0 0 1em    hsla(320,100%,50%,.5),
+      0 0 .125em hsla(320,100%,60%,.5),
+      -.5em -.125em .25em hsla(40,100%,60%,.2),
+       .5em  .125em .25em hsla(200,100%,60%,.4);
   }
   40%{
     color:hsl(230 100% 95%);
     text-shadow:
-      0 0 1em    hsla(320 100% 50% / .5),
-      0 0 .125em hsla(320 100% 90% / .5),
-      -.25em -.125em .125em hsla(40 100% 60% / .2),
-       .25em  .125em .125em hsla(200 100% 60% / .4);
+      0 0 1em    hsla(320,100%,50%,.5),
+      0 0 .125em hsla(320,100%,90%,.5),
+      -.25em -.125em .125em hsla(40,100%,60%,.2),
+       .25em  .125em .125em hsla(200,100%,60%,.4);
   }
   70%{
     color:hsl(230 80% 90%);
     text-shadow:
-      0 0 1em    hsla(320 100% 50% / .5),
-      0 0 .125em hsla(320 100% 60% / .5),
-       .5em -.125em .25em hsla(40 100% 60% / .2),
-      -.5em  .125em .25em hsla(200 100% 60% / .4);
+      0 0 1em    hsla(320,100%,50%,.5),
+      0 0 .125em hsla(320,100%,60%,.5),
+       .5em -.125em .25em hsla(40,100%,60%,.2),
+      -.5em  .125em .25em hsla(200,100%,60%,.4);
   }
   100%{
     color:hsl(230 40% 80%);
     text-shadow:
-      0 0 1em    hsla(320 100% 50% / .2),
-      0 0 .125em hsla(320 100% 60% / .3),
-       1em -.125em .5em hsla(40 100% 60% / 0),
-      -1em  .125em .5em hsla(200 100% 60% / 0);
+      0 0 1em    hsla(320,100%,50%,.2),
+      0 0 .125em hsla(320,100%,60%,.3),
+       1em -.125em .5em hsla(40,100%,60%,0),
+      -1em  .125em .5em hsla(200,100%,60%,0);
   }
 }
 </style>

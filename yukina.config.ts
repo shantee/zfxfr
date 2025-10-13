@@ -18,8 +18,12 @@ const YukinaConfig: Configuration = {
       href: "/",
     },
     {
-      nameKey: I18nKeys.nav_bar_archive,
-      href: "/archive",
+      // NOUVEAU : menu Services + sous-menu Tarifs
+      nameKey: I18nKeys.nav_bar_services,
+      href: "/services",
+      children: [
+        { nameKey: I18nKeys.nav_bar_tarifs, href: "/tarifs" },
+      ],
     },
     {
       nameKey: I18nKeys.nav_bar_contact,
@@ -28,25 +32,25 @@ const YukinaConfig: Configuration = {
     {
       nameKey: I18nKeys.nav_bar_blog,
       href: "/blog",
+      children: [
+        { nameKey: I18nKeys.nav_bar_archive, href: "/archive" }, // adapte l'URL si besoin
+        // { nameKey: I18nKeys.nav_bar_tags, href: "/tags" },     // éventuels autres sous-liens
+      ],
     },
   ],
 
   username: "shantee",
-  sign: "Ad Astra Per Aspera.",
-  avatarUrl: "/images/avatar1.jpg",
+  sign: "I make stuff.",
+  avatarUrl: "/images/avatar1.png",
   socialLinks: [
     {
       icon: "line-md:github-loop",
-      link: "https://github.com/WhitePaper233",
+      link: "https://github.com/shantee",
     },
     {
-      icon: "mingcute:bilibili-line",
-      link: "https://space.bilibili.com/22433608",
-    },
-    {
-      icon: "mingcute:netease-music-line",
-      link: "https://music.163.com/#/user/home?id=125291648",
-    },
+      icon: "line-md:youtube",
+      link: "https://www.youtube.com/@limace",
+    }
   ],
   maxSidebarCategoryChip: 6, // It is recommended to set it to a common multiple of 2 and 3
   maxSidebarTagChip: 12,
@@ -60,7 +64,7 @@ const YukinaConfig: Configuration = {
     "/images/empty4.jpg",
     "/images/empty5.jpg",
     "/images/empty6.jpg",
-    ],
+  ],
 
   slugMode: "RAW", // 'RAW' | 'HASH'
 

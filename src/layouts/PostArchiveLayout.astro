@@ -18,7 +18,7 @@ const { archiveMap, title, subTitle, bannerImage, slug } = Astro.props;
 ---
 
 <Main title={title} subTitle={subTitle} bannerImage={bannerImage} slug={slug}>
-  <div class="archives">
+  <div class="article-wrapper main-container">
     {
       archiveMap.size !== 0 &&
         [...archiveMap.keys()].map((year) => (
@@ -48,5 +48,18 @@ const { archiveMap, title, subTitle, bannerImage, slug } = Astro.props;
 <style>
   .archives {
     @apply mx-3 flex flex-col rounded-2xl bg-[var(--card-color)] px-10 py-5 lg:mx-0 lg:p-10;
+  }
+</style>
+<style is:global>
+  .main-container > .flex.flex-row.items-start > .space-y-8 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+   .article-wrapper {
+    @apply mx-3 rounded-2xl bg-[var(--card-color)] px-5 py-6 lg:mx-0 lg:px-10 lg:py-9;
+  }
+  .article {
+    @apply flex flex-col;
+    font-size: var(--primary-font);
   }
 </style>

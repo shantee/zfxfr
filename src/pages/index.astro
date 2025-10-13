@@ -1,8 +1,7 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import PostCard from "../components/PostCard.astro";
 import { getCollection } from "astro:content";
-
+import Map from "../components/Map.astro";
 const all = await getCollection("posts", ({ data }) => !data.draft);
 const getTime = (d)=> new Date(d.published ?? d.date ?? d.publishDate ?? d.updated ?? 0).getTime();
 const posts = all.sort((a,b) => getTime(b.data) - getTime(a.data));
@@ -15,12 +14,46 @@ const readMeta = (d) => {
 ---
 
 <MainLayout bannerHeight="40svh" title="Accueil">
-  <section class="HomeLatest">
-   Welcome...To my lovely site !
-  </section>
+  <div class="article-wrapper">
+ 
+
+<h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl">
+  <span class="text-transparent bg-clip-text bg-gradient-to-r to-lime-600 from-blue-400">Better Data</span>
+   Scalable AI.</h1>
+<p class="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">Here at Flowbite we focus on markets where technology, innovation, and capital can unlock long-term value and drive economic growth.</p>
+
+
+<Map lat={47.64} lng={6.12} zoom={13} radiusKm={10} popup="Autour de Vesoul (10 km)" />
+
+
+  </div>
+      
 </MainLayout>
 
 <style>
   .HomeLatest { width:100%; max-width:var(--page-width-xl); margin-inline:auto; padding-inline:16px; }
   .list { display:grid; gap:2rem; }
+  .title {font-size: 2.2rem;}
+  .title:before {position: relative;
+  display: block;
+  content: " ";
+  background-color: var(--primary-color);
+  top: 2.5px;
+  left: -15px;
+  bottom: 3px;
+  width: 0.3rem;
+  border-radius: 4px;}
+</style>
+<style is:global>
+  .main-container > .flex.flex-row.items-start > .space-y-8 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+   .article-wrapper {
+    @apply mx-3 rounded-2xl bg-[var(--card-color)] px-5 py-6 lg:mx-0 lg:px-10 lg:py-9;
+  }
+  .article {
+    @apply flex flex-col;
+    font-size: var(--primary-font);
+  }
 </style>

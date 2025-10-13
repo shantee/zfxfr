@@ -4,7 +4,7 @@ const poster = "/images/header-poster.webp"; // fallback si motion réduite
 <section class="hero-anim" aria-label="Header animé p5">
   <!-- Canvas p5 -->
   <div id="p5-holder"></div>
-  <noscript><img src={poster} alt="" width="1920" height="1080" /></noscript>
+  <noscript><img src=/images/noscripts.jpg alt="" width="1920" height="1080" /></noscript>
 
   <!-- Vagues Yukina au-dessus -->
   <div class="waves" id="header-waves">
@@ -127,6 +127,6 @@ const poster = "/images/header-poster.webp"; // fallback si motion réduite
 /* Accessibilité: fallback immobile */
 @media (prefers-reduced-motion: reduce){
   #p5-holder{ display:none; }
-  .hero-anim{ background:url({poster}) center/cover no-repeat; }
+  .hero-anim{ background:url(/images/noscripts.jpg) center/cover no-repeat; }
 }
 </style>

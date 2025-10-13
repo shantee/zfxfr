@@ -1,56 +1,65 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-
-// Récupère le statut renvoyé par api.php via ?sent=ok|fail|invalid|bot|method
-const url = new URL(Astro.request.url);
-const sent = url.searchParams.get("sent");
 ---
 
 <MainLayout bannerHeight="22vh" title="Contact">
+  <div class="article-wrapper">
+    <div class="article" style="margin:auto;"></div>
   <section id="contact">
     <h1>Contact</h1>
 
-    {sent === "ok" && (
-      <div class="alert success">✅ Message envoyé. Merci !</div>
-    )}
-    {sent === "fail" && (
-      <div class="alert error">❌ Erreur d’envoi. Réessaie plus tard.</div>
-    )}
-    {sent === "invalid" && (
-      <div class="alert error">⚠️ Champs manquants ou e-mail invalide.</div>
-    )}
-    {sent === "bot" && (
-      <div class="alert error">🤖 Détection anti-spam.</div>
-    )}
-    {sent === "method" && (
-      <div class="alert error">⚠️ Méthode HTTP non autorisée.</div>
-    )}
+    <!-- Statut dynamique (JS) + fallback ?sent=ok|fail|... -->
+    <div id="form-status" class="alert" role="status" aria-live="polite" hidden></div>
 
     <form
+      id="contact-form"
       action="/api.php"
       method="POST"
+      enctype="multipart/form-data"
       accept-charset="utf-8"
       autocomplete="on"
       novalidate
     >
       <div class="field">
-        <label for="name">Nom</label>
-        <input id="name" name="name" type="text" required placeholder="Votre nom" />
-      </div>
-
-      <div class="field">
         <label for="email">E-mail</label>
-        <input id="email" name="email" type="email" required placeholder="vous@exemple.com" />
-      </div>
-
-      <div class="field">
-        <label for="subject">Sujet</label>
-        <input id="subject" name="subject" type="text" placeholder="Sujet du message" />
+        <input id="email" name="email" type="email" required placeholder="votre-email@gmail.com" />
       </div>
 
       <div class="field">
         <label for="message">Message</label>
-        <textarea id="message" name="message" rows="6" required placeholder="Votre message…"></textarea>
+        <textarea id="message" name="message" rows="6" required placeholder="Votre message…&#10;(N'hésitez pas à préciser votre n° de téléphone si vous souhaitez être rappelé)"></textarea>
+      </div>
+
+      <!-- Upload fichier (optionnel) -->
+      <div class="field">
+        <label for="file">Fichier (optionnel)</label>
+
+        <!-- Zone glisser-déposer + input file -->
+        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Déposer ou sélectionner un fichier">
+          <div class="dz-icon">⬆️</div>
+          <div class="dz-text">
+            <strong>Glisse-dépose</strong> ton fichier ici<br />
+            <span class="dz-sub">ou clique pour sélectionner</span>
+          </div>
+          <input
+            id="file"
+            name="file"
+            type="file"
+            class="file-input"
+            accept=".jpg,.jpeg,.png,.gif,.pdf,.zip,.rar,.7z,.txt,.md,.doc,.docx,.xls,.xlsx"
+          />
+        </div>
+
+        <!-- Nom du fichier choisi -->
+        <div id="fileName" class="file-name" hidden></div>
+
+        <!-- Barre de progression -->
+        <div id="progressWrap" class="progress-wrap" hidden>
+          <div id="progressBar" class="progress-bar"></div>
+          <span id="progressPct" class="progress-pct">0%</span>
+        </div>
+
+        <small class="hint">Max ~10 Mo. Types autorisés : images, PDF, archives, texte, Office.</small>
       </div>
 
       <!-- Honeypot anti-spam (doit rester vide) -->
@@ -64,70 +73,190 @@ const sent = url.searchParams.get("sent");
 
     <p class="note">* Vos informations ne sont utilisées que pour répondre à votre message.</p>
   </section>
+  </div>
+</div>
 </MainLayout>
 
 <style>
   /* Wrapper et centrage */
-  #contact {
-    max-width: 760px;
-    margin: 40px auto;
-    padding: 0 16px;
-  }
-
-  h1 {
-    margin: 0 0 1rem 0;
-    font-size: 2rem;
-  }
+  #contact { max-width: 760px; margin: 40px auto; padding: 0 16px; }
+  h1 { margin: 0 0 1rem 0; font-size: 2rem; }
 
   /* Messages d’alerte */
-  .alert {
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    margin-bottom: 1rem;
-    background: var(--card-color);
-    color: var(--text-color);
-    border: 1px dashed rgba(127,127,127,.35);
-  }
+  .alert { border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem;
+           background: var(--card-color); color: var(--text-color);
+           border: 1px dashed rgba(127,127,127,.35); }
   .alert.success { border-color: #3cb37199; }
   .alert.error   { border-color: #ff6b6b99; }
 
   /* Formulaire */
   form { display: grid; gap: 16px; }
-
   .field { display: grid; gap: 6px; }
+  label { font-weight: 600; color: var(--text-color); }
 
-  label {
-    font-weight: 600;
-    color: var(--text-color);
-  }
-
-  input[type="text"],
-  input[type="email"],
-  textarea {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
+  input[type="text"], input[type="email"], textarea {
+    width: 100%; padding: 10px 12px; border-radius: 10px;
     border: 1px solid rgba(127,127,127,.35);
-    background: var(--card-color);
-    color: var(--text-color);
-    outline: none;
+    background: var(--card-color); color: var(--text-color); outline: none;
   }
-  input::placeholder, textarea::placeholder {
-    color: var(--text-color-lighten);
-  }
+  input::placeholder, textarea::placeholder { color: var(--text-color-lighten); }
 
-  .btn {
-    display: inline-block;
-    border: 0;
-    border-radius: 12px;
-    padding: 10px 16px;
-    background: var(--primary-color);
-    color: white;
-    cursor: pointer;
-    font-weight: 700;
-  }
+  .btn { display: inline-block; border: 0; border-radius: 12px; padding: 10px 16px;
+         background: var(--primary-color); color: white; cursor: pointer; font-weight: 700; }
   .btn:hover { filter: brightness(1.05); }
 
   /* Honeypot caché */
   .hp { position: absolute; left: -9999px; visibility: hidden; height: 0; overflow: hidden; }
+
+  /* Dropzone */
+  .dropzone {
+    position: relative; display: grid; place-items: center; gap: .25rem;
+    border: 1px dashed rgba(127,127,127,.45); border-radius: 12px; padding: 18px;
+    background: color-mix(in oklab, var(--card-color) 92%, transparent);
+    cursor: pointer; transition: border-color .2s, background .2s, transform .05s ease;
+    user-select: none;
+  }
+  .dropzone:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color), white 40%); outline-offset: 2px; }
+  .dropzone:hover { border-color: var(--primary-color); }
+  .dropzone.dragover { border-color: var(--primary-color); background: color-mix(in oklab, var(--card-color) 85%, var(--primary-color) 15%); }
+  .dz-icon { font-size: 1.35rem; opacity: .9; }
+  .dz-text { text-align: center; color: var(--text-color); font-size: .95rem; line-height: 1.2; }
+  .dz-sub { color: var(--text-color-lighten); font-weight: 500; }
+
+  .file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+  .file-name {
+    margin-top: .35rem; font-size: .9rem; padding: 6px 10px; border-radius: 10px;
+    background: color-mix(in oklab, var(--card-color) 94%, transparent);
+    border: 1px solid rgba(127,127,127,.25);
+    color: var(--text-color);
+  }
+  .hint { color: var(--text-color-lighten); }
+
+  /* Progress bar */
+  .progress-wrap { position: relative; height: 12px; background: rgba(127,127,127,.2);
+                   border-radius: 999px; overflow: hidden; margin-top: .35rem; }
+  .progress-bar { height: 100%; width: 0%;
+                  background: linear-gradient(90deg, var(--primary-color), color-mix(in oklab, var(--primary-color), white 20%));
+                  border-radius: 999px; transition: width .15s ease; }
+  .progress-pct { position: absolute; inset: 0; display: grid; place-items: center;
+                  font-size: .78rem; color: white; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+</style>
+
+<script is:raw>
+  (function () {
+    const form = document.getElementById('contact-form');
+    const statusEl = document.getElementById('form-status');
+
+    const drop = document.getElementById('dropzone');
+    const input = document.getElementById('file');
+    const nameEl = document.getElementById('fileName');
+    const pWrap = document.getElementById('progressWrap');
+    const pBar  = document.getElementById('progressBar');
+    const pPct  = document.getElementById('progressPct');
+
+    const MESSAGES = {
+      ok:      { text: "✅ Message envoyé. Je vous réponds rapidement !", cls: "success" },
+      fail:    { text: "❌ Erreur d’envoi. Merci de réessayer.",         cls: "error"   },
+      invalid: { text: "⚠️ Champs manquants ou e-mail invalide.",        cls: "error"   },
+      bot:     { text: "🤖 Détection anti-spam.",                         cls: "error"   },
+      method:  { text: "⚠️ Méthode HTTP non autorisée.",                  cls: "error"   }
+    };
+
+    function showStatus(kind) {
+      const m = MESSAGES[kind] || MESSAGES.fail;
+      statusEl.className = 'alert ' + m.cls;
+      statusEl.textContent = m.text;
+      statusEl.hidden = false;
+    }
+    function clearStatus() {
+      statusEl.hidden = true;
+      statusEl.textContent = '';
+    }
+    function stripSentParam() {
+      if (location.search.includes('sent=')) {
+        history.replaceState(null, '', location.pathname + location.hash);
+      }
+    }
+
+    // Affichage si on arrive avec ?sent=...
+    const params = new URLSearchParams(location.search);
+    const sent = params.get('sent');
+    if (sent) {
+      showStatus(sent);
+      stripSentParam();
+    }
+
+    // Drag & drop
+    drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragover'); });
+    drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+    drop.addEventListener('drop', (e) => {
+      e.preventDefault(); drop.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        input.files = e.dataTransfer.files;
+        setFileName(input.files[0]);
+      }
+    });
+    input.addEventListener('change', () => setFileName(input.files[0]));
+    function setFileName(file) {
+      if (!file) { nameEl.hidden = true; nameEl.textContent = ''; return; }
+      nameEl.textContent = `📎 ${file.name} — ${(file.size/1048576).toFixed(2)} Mo`;
+      nameEl.hidden = false;
+    }
+
+    // Submit (XHR + progression). Si pas supporté → submit normal (fallback)
+    form.addEventListener('submit', (e) => {
+      if (!('XMLHttpRequest' in window) || !('upload' in new XMLHttpRequest())) return;
+
+      e.preventDefault();
+      clearStatus();
+
+      // Afficher la barre si présente
+      if (pWrap) { pWrap.hidden = false; pBar.style.width = '0%'; if (pPct) pPct.textContent = '0%'; }
+
+      const data = new FormData(form);
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', form.action, true);
+      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+      xhr.upload.onprogress = (ev) => {
+        if (!ev.lengthComputable || !pBar) return;
+        const pct = Math.round((ev.loaded / ev.total) * 100);
+        pBar.style.width = pct + '%';
+        if (pPct) pPct.textContent = pct + '%';
+      };
+
+      xhr.onerror = () => showStatus('fail');
+      xhr.onload = () => {
+        let kind = (xhr.status === 200) ? 'ok' : 'fail';
+        try {
+          const res = JSON.parse(xhr.responseText || '{}');
+          if (res.status) kind = res.status;
+        } catch {}
+        showStatus(kind);
+
+        if (kind === 'ok') {
+          form.reset();
+          if (nameEl) { nameEl.hidden = true; nameEl.textContent = ''; }
+          if (pWrap) { setTimeout(() => { pWrap.hidden = true; }, 600); }
+        }
+      };
+
+      xhr.send(data);
+    });
+  })();
+</script>
+<style is:global>
+  .main-container > .flex.flex-row.items-start > .space-y-8 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .article-wrapper {
+    @apply mx-3 rounded-2xl bg-[var(--card-color)] px-5 py-6 lg:mx-0 lg:px-10 lg:py-9;
+  }
+  .article {
+    @apply flex flex-col;
+    font-size: var(--primary-font);
+  }
+  
 </style>

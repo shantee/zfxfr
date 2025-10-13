@@ -5,50 +5,66 @@
 import Main from "../../layouts/MainLayout.astro";
 import PostCard from "../../components/PostCard.astro";
 import Pagination from "../../components/controllers/Pagination.astro";
+import SideBar from "../../components/SideBar.astro";
+
 
 import type { PaginateFunction } from "astro";
 import { GetSortedPosts } from "../../utils/content";
 
 export async function getStaticPaths({ paginate }: { paginate: PaginateFunction }) {
   const postCollections = await GetSortedPosts();   // comme sur ta home
-  return paginate(postCollections, { pageSize: 6 }); // /blog, /blog/2, /blog/3...
+  return paginate(postCollections, { pageSize: 6 }); 
 }
 
 const { page } = Astro.props;
 ---
-
 <Main bannerHeight="22vh" title="Blog">
-  <div class="space-y-8">
-    <div class="w-full space-y-4">
-      {page.data.map((entry, index) => (
-        <div
-          class="onload-animation"
-          style={`animation-delay: calc(var(--onload-animation-delay) + ${index + 1} * var(--onload-animation-interval));`}
-        >
-          <PostCard
-            id={entry.id}
-            title={entry.data.title}
-            published={entry.data.published}
-            category={entry.data.category}
-            tags={entry.data.tags}
-            description={entry.data.description}
-            image={entry.data.image}
-            readingMetadata={(entry.rendered!.metadata as any).frontmatter.readingMetadata}
-          />
-        </div>
-      ))}
+  
+ <div class="blog-layout grid gap-4 lg:[grid-template-columns:248px_minmax(0,1fr)]">
+  <aside class="hidden lg:block lg:sticky lg:top-[4.5rem]">
+    <SideBar />
+  </aside>
+
+    <!-- Colonne contenu -->
+   <div class="space-y-8 min-w-0">
+      
+      <div class="w-full space-y-4">
+        {page.data.map((entry, index) => (
+          <div
+            class="onload-animation"
+            style={`animation-delay: calc(var(--onload-animation-delay) + ${index + 1} * var(--onload-animation-interval));`}
+          >
+            <PostCard
+              id={entry.id}
+              title={entry.data.title}
+              published={entry.data.published}
+              category={entry.data.category}
+              tags={entry.data.tags}
+              description={entry.data.description}
+              image={entry.data.image}
+              readingMetadata={(entry.rendered!.metadata as any).frontmatter.readingMetadata}
+            />
+          </div>
+        ))}
+      </div>
+
+      <Pagination
+        class="onload-animation"
+        lastPage={page.lastPage}
+        current={page.currentPage}
+        prevURL={page.url.prev}
+        nextURL={page.url.next}
+        basePath="/blog"
+        style={`animation-delay: calc(var(--onload-animation-delay) + ${page.data.length + 1} * var(--onload-animation-interval));`}
+      />
     </div>
-
-    <Pagination
-      class="onload-animation"
-      lastPage={page.lastPage}
-      current={page.currentPage}
-      prevURL={page.url.prev}
-      nextURL={page.url.next}
-       basePath="/blog" 
-      style={`animation-delay: calc(var(--onload-animation-delay) + ${page.data.length + 1} * var(--onload-animation-interval));`}
-    />
-
-    
   </div>
 </Main>
+<style is:global>
+  /* Si cette page contient .blog-layout, on cache la sidebar du layout
+     et on libère la largeur du .content d'origine */
+  @supports selector(.main-container:has(.blog-layout)) {
+    .main-container:has(.blog-layout) .side-bar { display: none !important; }
+    .main-container:has(.blog-layout) .content { width: 100% !important; }
+  }
+</style>

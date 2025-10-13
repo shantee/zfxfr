@@ -1,0 +1,35 @@
+---
+import { getEntry, render } from "astro:content";
+import Main from "../layouts/MainLayout.astro";
+import Markdown from "../components/Markdown.astro";
+import CopyRight from "../components/misc/CopyRight.astro";
+
+const post = await getEntry("specs", "services");
+const { Content } = await render(post);
+
+const title = "Services";
+const subTitle = "Ce que je propose";
+const bannerImage = undefined;
+const published = new Date("2025-10-13");
+---
+<Main title={title} subTitle={subTitle} bannerImage={bannerImage} bannerHeight="24vh"; >
+  <div class="article-wrapper">
+    <div class="article">
+      <Markdown><Content /></Markdown>
+    </div>
+  </div>
+</Main>
+
+<style is:global>
+  .main-container > .flex.flex-row.items-start > .space-y-8 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+   .article-wrapper {
+    @apply mx-3 rounded-2xl bg-[var(--card-color)] px-5 py-6 lg:mx-0 lg:px-10 lg:py-9;
+  }
+  .article {
+    @apply flex flex-col;
+    font-size: var(--primary-font);
+  }
+</style>

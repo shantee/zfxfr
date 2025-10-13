@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Motrus</title>
+  <!-- Pico.css (CSS only) -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <!-- QR Code (client) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" crossorigin="anonymous"></script>
+  <script src="./stats.php?tracker=1" defer></script>
+  <style>
+    /* ====== THEME (bleu clair) ====== */
+    :root{ --brand-blue:#3bb7ff; --brand-ink:#082c40; --card-bg: var(--pico-card-background-color, #fff); }
+
+    /* Header bar (logo centré) */
+    .site-header{ background:var(--brand-blue); color:#fff; position:sticky; top:0; z-index:10; box-shadow:0 8px 24px rgba(0,0,0,.18); }
+    .site-header .container{
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;   /* on place le bouton à droite */
+      padding: .6rem 1rem;
+      min-height: 72px;            /* réserve de hauteur pour le logo */
+    }
+    .site-logo{
+      position: absolute; left:50%; transform: translateX(-50%);
+      line-height: 0;              /* pas d'espace vertical parasite */
+      display: inline-block;
+    }
+    .site-logo img{
+    height: 117px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 1px 2px rgba(0, 183, 255, 0.51));
+    }
+    @media (max-width: 480px){
+      .site-header .container{ min-height: 64px; }
+      .site-logo img{ height: 44px; }
+    }
+    .icon-btn{ background:transparent; border:none; color:#fff; cursor:pointer; padding:.4rem .6rem; border-radius:.6rem; position:relative; z-index:1; }
+    .icon-btn:hover{ background:rgba(255,255,255,.12); }
+
+    /* Layout */
+    main.container{ max-width: 900px; }
+    .hidden{ display:none !important }
+    section[role="view"]{ margin-top: 1rem; }
+    .center{ text-align:center }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+
+    /* Cards */
+    .card{ background:var(--card-bg); padding:1.25rem; border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.06); }
+    .card + .card{ margin-top: 1rem; }
+
+    /* Buttons */
+    .btn{ display:inline-flex; align-items:center; gap:.4rem; padding:.8rem 1rem; border-radius:.7rem; border:1px solid transparent; cursor:pointer; text-decoration:none; }
+    .btn-primary{ background:var(--brand-blue); color:var(--brand-ink); border-color:var(--brand-blue); }
+    .btn-outline{ background:transparent; color:var(--brand-blue); border-color:var(--brand-blue); }
+    .btn:disabled{ opacity:.6; cursor:not-allowed; }
+    .icon-left{ vertical-align:-.25em; margin-right:.35rem; }
+
+    /* Inputs */
+    .wide-input input{ font-size:1.25rem; padding: .9rem 1rem; letter-spacing:.05em; }
+
+    /* Grid helpers */
+    .grid{ display:grid; gap: .8rem; }
+    .grid-2{ grid-template-columns: 1fr 1fr; }
+    @media (max-width:720px){ .grid-2{ grid-template-columns: 1fr; } }
+
+    /* Chips (si besoin ailleurs) */
+    .chips{ display:flex; flex-wrap:wrap; gap:.5rem; }
+    .chip{ padding:.45rem .7rem; border-radius: 999px; border:1px solid color-mix(in srgb, var(--brand-blue) 35%, transparent); background: color-mix(in srgb, var(--brand-blue) 14%, transparent); color: var(--brand-ink); cursor:pointer; }
+
+    /* Misc */
+    .big-word { font-size: clamp(26px, 5vw, 44px); font-weight: 700; letter-spacing: .5px }
+    .timer { font-size: clamp(22px,4vw,36px); font-weight:700 }
+    .spinner { width:48px; height:48px; border-radius:50%; border:4px solid rgba(0,0,0,.15); border-top-color: var(--brand-blue); animation: spin 1s linear infinite; margin: 12px auto; }
+    @keyframes spin { to { transform: rotate(360deg) } }
+    .form { display: grid; gap: 1rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: end; }
+    .actions { display: flex; gap: .8rem; flex-wrap: wrap; justify-content: center; }
+    .mb0 { margin-bottom: 0; }
+    @media (max-width: 720px){ .form-row { grid-template-columns: 1fr; } }
+
+    .form-row.centered { grid-template-columns: 100%; justify-items: center; }
+    .form-row.centered > * { width: min(420px, 100%); }
+    .form-row.centered input, .form-row.centered select { width: 100%; }
+
+    /* Écran de jeu */
+    .game-panel{ display: grid; gap: 1rem; justify-items: center; text-align: center; }
+    .game-role{ font-weight: 700; font-size: clamp(18px, 2.6vw, 22px); margin: 0; }
+    .game-role.intrus { color: #e45858; } .game-role.groupe { color: #16a34a; }
+    .game-word-label{ justify-self: start; margin: 0; opacity: .75; }
+    .game-word{ font-size: clamp(26px, 5vw, 44px); font-weight: 800; letter-spacing: .5px }
+    .game-word.intrus { color: #e45858; } .game-word.groupe { color: #16a34a; }
+
+    /* Fin de partie */
+    .end-panel{ display: grid; gap: 1rem; justify-items: center; text-align: center; }
+    .end-title{ margin: 0; font-weight: 700; }
+    .end-line{ margin: .25rem 0; }
+    .danger{ color: #e45858; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container">
+      <!-- Logo centré -->
+      <a href="#" class="site-logo" aria-label="Motrus - Accueil">
+        <img src="logo.png" alt="Motrus">
+      </a>
+      <!-- Bouton Accueil à droite (optionnel) -->
+      <button id="btnHome" class="icon-btn" title="Accueil"><span class="material-icons">home</span></button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- HOME -->
+    <section id="view-home" role="view">
+      <article class="card">
+        <h4>Choisis une option</h4>
+        <div class="grid">
+          <button id="goCreate" class="btn btn-primary"><span class="material-icons icon-left">add_circle</span>Créer une partie</button>
+          <button id="goJoin" class="btn btn-outline"><span class="material-icons icon-left">login</span>Rejoindre une partie</button>
+        </div>
+        <p class="secondary">Sans compte. Partage un QR/code, et c’est parti.</p>
+      </article>
+    </section>
+
+    <!-- CREATE -->
+    <section id="view-create" role="view" class="hidden">
+      <article class="card form">
+        <h4 class="mb0">Créer une partie</h4>
+        <div class="form-row">
+          <label for="duration">Durée (minutes)
+            <input id="duration" type="number" min="2" max="60" value="5" />
+          </label>
+          <label for="pack">Pack de mots
+            <select id="pack">
+              <option value="defaut" selected>Familial (défaut)</option>
+              <option value="adultes">Adultes (NSFW)</option>
+              <option value="chameleon">Chameleon (intrus sans mot)</option>
+              <option value="phrases">Phrases (indices)</option>
+              <option value="emoji">Émojis</option>
+              <option value="tabou">Tabou (soft)</option>
+            </select>
+          </label>
+        </div>
+        <div class="actions">
+          <button id="btnCreate" class="btn btn-primary" type="button"><span class="material-icons icon-left">rocket_launch</span>Créer</button>
+          <button id="btnCancelCreate" class="btn btn-outline" type="button">Annuler</button>
+        </div>
+      </article>
+
+      <article id="shareCard" class="card form hidden">
+        <h5>Partager</h5>
+        <div class="form-row">
+          <div class="center">
+            <div id="qr" class="center" style="display:inline-block"></div>
+            <small>Scannez pour rejoindre</small>
+          </div>
+          <div>
+            <label for="code6">Code (6 chiffres)
+              <input id="code6" class="mono" readonly value="" />
+            </label>
+            <button id="copyLink" class="btn btn-outline" type="button"><span class="material-icons icon-left">content_copy</span>Copier le lien</button>
+          </div>
+        </div>
+        <hr />
+        <div class="center">
+          <p class="secondary">Joueurs connectés</p>
+          <div class="timer" id="joinCount">0</div>
+          <div class="spinner" id="waitAnim"></div>
+          <div class="actions" style="justify-content:center">
+            <button id="btnStart" class="btn btn-primary" disabled type="button"><span class="material-icons icon-left">play_arrow</span>Démarrer la partie</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- JOIN -->
+    <section id="view-join" role="view" class="hidden">
+      <article class="card form">
+        <h4 class="mb0">Rejoindre une partie</h4>
+        <div class="form-row centered">
+          <label for="joinCode">Code (6 chiffres)
+            <input id="joinCode" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="123456">
+          </label>
+        </div>
+        <div class="actions">
+          <button id="btnJoin" class="btn btn-primary" type="button"><span class="material-icons icon-left">login</span>Rejoindre</button>
+          <button id="btnCancelJoin" class="btn btn-outline" type="button">Annuler</button>
+        </div>
+      </article>
+
+      <article id="joinLobby" class="card center hidden">
+        <h5>Lobby</h5>
+        <div class="spinner"></div>
+        <p class="secondary">En attente de l’hôte…</p>
+        <p class="secondary">Joueurs dans la partie : <b id="joinCount2">0</b></p>
+      </article>
+    </section>
+
+    <!-- GAME -->
+    <section id="view-game" role="view" class="hidden">
+      <article class="card game-panel">
+        <div class="timer" id="gameTimer">05:00</div>
+        <p id="roleLine" class="game-role">—</p>
+        <p class="game-word-label">Ton mot :</p>
+        <div id="word" class="mono game-word">—</div>
+      </article>
+    </section>
+
+    <!-- END -->
+    <section id="view-end" role="view" class="hidden">
+      <article class="card end-panel">
+        <h4 class="end-title">Fin de partie&nbsp;!</h4>
+        <p id="endTimeMsg" class="end-line">Temps écoulé&nbsp;!</p>
+        <p id="endIntrusMsg" class="end-line danger hidden">J’étais l’intrus&nbsp;!</p>
+        <p class="end-line">L’intrus gagne s’il n’est pas démasqué&nbsp;!</p>
+        <div class="actions">
+          <button id="btnReplay" class="btn btn-primary"><span class="material-icons icon-left">replay</span>Rejouer</button>
+          <button id="btnExit" class="btn btn-outline">Quitter</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script src="scripts.js" crossorigin="anonymous"></script>
+</body>
+</html>

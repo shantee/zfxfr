@@ -1,0 +1,101 @@
+---
+export interface Props {
+  lat?: number; lng?: number; zoom?: number;
+  radiusKm?: number; popup?: string;
+  marker?: boolean; circle?: boolean;
+  class?: string; style?: string;
+  height?: number; heightMd?: number; heightLg?: number;
+}
+const {
+  lat = 47.64, lng = 6.12, zoom = 2,
+  radiusKm = 15, popup = "Interventions autour de Vesoul",
+  marker = true, circle = true,
+  class: klass = "", style,
+  height = 360, heightMd = 420, heightLg = 480,
+} = Astro.props;
+---
+
+<div data-map-root>
+  <div
+    class={`leaflet-map rounded-2xl overflow-hidden ${klass}`}
+    style={`--h:${height}px;--h-md:${heightMd}px;--h-lg:${heightLg}px;${style ?? ""}`}
+    data-lat={lat} data-lng={lng} data-zoom={zoom}
+    data-radius-km={radiusKm} data-popup={popup}
+    data-marker={marker} data-circle={circle}
+  ></div>
+
+  <noscript>
+    <a href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=${zoom}/${lat}/${lng}`} target="_blank" rel="noopener">
+      Voir la carte (nécessite JavaScript)
+    </a>
+  </noscript>
+
+  <script is:inline>
+  (function () {
+    const root = document.currentScript.closest('[data-map-root]');
+    if (!root) return;
+    const el = root.querySelector('.leaflet-map');
+    if (!el) return;
+
+    // Injecte Leaflet CSS une seule fois
+    if (!document.querySelector('link[data-leaflet]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      link.setAttribute('data-leaflet', '');
+      document.head.appendChild(link);
+    }
+
+    function init() {
+      const lat = parseFloat(el.dataset.lat);
+      const lng = parseFloat(el.dataset.lng);
+      const zoom = parseInt(el.dataset.zoom, 10);
+      const radiusKm = parseFloat(el.dataset.radiusKm);
+      const showMarker = el.dataset.marker === 'true';
+      const showCircle = el.dataset.circle === 'true';
+      const popup = el.dataset.popup;
+const map = L.map(el).setView([lat, lng], zoom);           // scrollWheelZoom est true par défaut
+// ou, si tu préfères être explicite :
+// const map = L.map(el, { scrollWheelZoom: true }).setView([lat, lng], zoom);
+// désactive le zoom avec la molette
+ //     const map = L.map(el, { scrollWheelZoom: false }).setView([lat, lng], zoom);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 20, detectRetina: true,
+       // attribution: '&copy; OpenStreetMap contributors',
+      }).addTo(map);
+
+      if (showMarker) {
+        const m = L.marker([lat, lng]).addTo(map);
+        if (popup) m.bindPopup(popup);
+      }
+      if (showCircle && radiusKm > 0) {
+        L.circle([lat, lng], { radius: radiusKm * 1000, weight: 2, fillOpacity: 0.08 }).addTo(map);
+      }
+    }
+
+    // Charge Leaflet JS si nécessaire, puis init
+    if (typeof window.L === 'undefined') {
+      let s = document.querySelector('script[data-leaflet]');
+      if (!s) {
+        s = document.createElement('script');
+        s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+        s.defer = true;
+        s.setAttribute('data-leaflet', '');
+        s.onload = init;
+        document.head.appendChild(s);
+      } else {
+        s.addEventListener('load', init, { once: true });
+      }
+    } else {
+      init();
+    }
+  })();
+  </script>
+</div>
+
+<style>
+.leaflet-map { height: var(--h, 360px); }
+@media (min-width: 768px)  { .leaflet-map { height: var(--h-md, 420px); } }
+@media (min-width: 1024px) { .leaflet-map { height: var(--h-lg, 480px); } }
+</style>

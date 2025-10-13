@@ -1,5 +1,12 @@
 import type I18nKeys from "../locales/keys";
 
+/** Menu item + sous-menus récursifs */
+interface Navigator {
+  nameKey: I18nKeys;
+  href: string;
+  children?: Navigator[]; // <-- sous-menus optionnels
+}
+
 interface Configuration {
   title: string;
   subTitle: string;
@@ -11,7 +18,8 @@ interface Configuration {
 
   locale: "en" | "fr-FR";
 
-  navigators: { nameKey: I18nKeys; href: string }[];
+  /** passe de {nameKey, href}[] à Navigator[] */
+  navigators: Navigator[];
 
   username: string;
   sign: string;
@@ -36,4 +44,4 @@ interface Configuration {
   bannerStyle: "LOOP";
 }
 
-export type { Configuration };
+export type { Configuration, Navigator };

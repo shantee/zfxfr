@@ -10,6 +10,10 @@ export const fr: Translation = {
   [key.nav_bar_archive]: "Archives",
   [key.nav_bar_contact]: "Contact",
   [key.nav_bar_blog]: "Blog",
+  [key.nav_bar_services]: "Services",
+  [key.nav_bar_tarifs]: "Tarifs",
+  [key.nav_bar_about]: "À propos",
+  [key.nav_bar_github]: "GitHub",
   [key.nav_bar_search_placeholder]: "Rechercher",
 
   [key.post_card_words]: "mots",
