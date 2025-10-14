@@ -1,5 +1,5 @@
 ---
-title: "Saumon snacké + gratins de poireaux sur purée"
+title: "Saumon  snacké + gratins de poireaux sur purée"
 slug: "saumon-snacke-gratin-poireaux"
 image: /images/cuisine/saumon-gratin-poireau.jpg
 published: 2025-10-08

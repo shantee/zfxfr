@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+# newpost — génère un fichier d'article avec entête préremplie (Astro Content)
+# Usage : newpost "Mon super titre" [-d DIR] [-s SLUG] [-e]
+#   -d DIR  : dossier de sortie (auto: src/content/posts → content/posts → src/posts → posts → .)
+#   -s SLUG : slug personnalisé (sinon généré)
+#   -e      : ouvre le fichier dans $EDITOR après création
+
+set -euo pipefail
+
+slugify() {
+  local s
+  s=$(printf '%s' "$1" | iconv -t ascii//TRANSLIT 2>/dev/null || printf '%s' "$1")
+  s=$(printf '%s' "$s" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g; s/-+/-/g')
+  printf '%s' "$s"
+}
+
+if [ $# -lt 1 ]; then
+  echo "Usage: newpost \"Titre\" [-d DIR] [-s SLUG] [-e]" >&2
+  exit 1
+fi
+
+TITLE="$1"; shift
+OUTDIR=""
+SLUG=""
+OPEN_AFTER="no"
+
+while getopts ":d:s:e" opt; do
+  case "$opt" in
+    d) OUTDIR="$OPTARG" ;;
+    s) SLUG="$OPTARG" ;;
+    e) OPEN_AFTER="yes" ;;
+    :) echo "Option -$OPTARG requiert un argument." >&2; exit 1 ;;
+    \?) echo "Option inconnue: -$OPTARG" >&2; exit 1 ;;
+  esac
+done
+
+# Dossier de sortie
+if [ -z "${OUTDIR}" ]; then
+  for d in ./src/content/posts ./content/posts ./src/posts ./posts .; do
+    if [ -d "$d" ]; then OUTDIR="$d"; break; fi
+  done
+  [ -z "${OUTDIR}" ] && OUTDIR="./posts"
+fi
+mkdir -p "$OUTDIR"
+
+# Slug
+if [ -z "${SLUG}" ]; then
+  SLUG="$(slugify "$TITLE")"
+  [ -z "$SLUG" ] && SLUG="post-$(date +%s)"
+fi
+
+PUBDATE="$(date +%Y-%m-%d)"   # ISO (compatible z.date())
+FILE="$OUTDIR/${SLUG}.md"
+
+# éviter l’écrasement
+i=2
+while [ -e "$FILE" ]; do
+  FILE="$OUTDIR/${SLUG}-${i}.md"
+  i=$((i+1))
+done
+
+# Échappes (YAML)
+TITLE_ESC=${TITLE//\"/\\\"}
+DESC_ESC=${TITLE_ESC}
+
+# Valeurs par défaut
+IMAGE="/images/empty.jpg"
+TAGS='["bash", "cli", "notes"]'
+CATEGORY="Blog"
+LICENSE="Unlicensed"
+AUTHOR="shantee"
+SOURCE_LINK="https://zfx.fr"
+DRAFT="false"
+
+# Écriture front-matter
+cat > "$FILE" <<EOF
+---
+title: "$TITLE_ESC"
+slug: "$SLUG"
+image: "$IMAGE"
+published: $PUBDATE
+description: "$DESC_ESC"
+tags: $TAGS
+category: "$CATEGORY"
+licenseName: "$LICENSE"
+author: "$AUTHOR"
+sourceLink: "$SOURCE_LINK"
+draft: $DRAFT
+---
+
+EOF
+
+echo "✅ Article créé : $FILE"
+[ "$OPEN_AFTER" = "yes" ] && ${EDITOR:-nano} "$FILE"
