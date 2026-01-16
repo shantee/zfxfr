@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Extrusion SVG / PNG → OBJ</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #111;
+      color: #eee;
+    }
+    #ui {
+      width: 320px;
+      padding: 12px;
+      background: #181818;
+      border-right: 1px solid #333;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    #viewer {
+      flex: 1;
+      position: relative;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+    #info {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 8px;
+      min-height: 2em;
+    }
+    button {
+      padding: 6px 10px;
+      border: 1px solid #555;
+      background: #262626;
+      color: #eee;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    button:hover {
+      background: #333;
+    }
+    h1 {
+      font-size: 16px;
+      margin: 0 0 4px;
+    }
+    small {
+      color: #888;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <h1>Extrudeur 2D → 3D</h1>
+    <small>Charge un SVG (logo, texte…) ou un PNG (lettre sur fond transparent).</small>
+
+    <label>
+      Fichier (SVG ou PNG) :
+      <input type="file" id="fileInput" accept=".svg,.png,image/png" />
+    </label>
+
+    <label>
+      Profondeur / Hauteur :
+      <input type="range" id="depth" min="0.1" max="20" step="0.1" value="5" />
+      <span id="depthValue">5</span>
+    </label>
+
+    <label>
+      Taille globale :
+      <input type="range" id="scale" min="0.2" max="5" step="0.1" value="1" />
+      <span id="scaleValue">1</span>
+    </label>
+
+    <label>
+      Résolution PNG (subsampling) :
+      <input type="range" id="resolution" min="16" max="256" step="16" value="128" />
+      <span id="resolutionValue">128</span>
+    </label>
+
+    <label>
+      <input type="checkbox" id="wireframe" />
+      Wireframe
+    </label>
+
+    <button id="exportBtn">Exporter en OBJ</button>
+
+    <div id="info"></div>
+  </div>
+
+  <div id="viewer"></div>
+
+  <!-- Three.js + addons (version 0.132.2, chemins corrects) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/SVGLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/exporters/OBJExporter.js"></script>
+
+  <script>
+    // --- UI ---
+    const fileInput = document.getElementById('fileInput');
+    const depthSlider = document.getElementById('depth');
+    const depthValue = document.getElementById('depthValue');
+    const scaleSlider = document.getElementById('scale');
+    const scaleValue = document.getElementById('scaleValue');
+    const resSlider = document.getElementById('resolution');
+    const resValue = document.getElementById('resolutionValue');
+    const wireframeCheckbox = document.getElementById('wireframe');
+    const exportBtn = document.getElementById('exportBtn');
+    const info = document.getElementById('info');
+    const viewer = document.getElementById('viewer');
+
+    depthValue.textContent = depthSlider.value;
+    scaleValue.textContent = scaleSlider.value;
+    resValue.textContent = resSlider.value;
+
+    // --- Three.js de base ---
+    let scene, camera, renderer, controls;
+    let currentMesh = null;
+    let currentType = null; // 'svg' ou 'png'
+    let currentSVGPaths = null;
+    let currentImage = null; // HTMLImageElement pour PNG
+
+    const svgLoader = new THREE.SVGLoader();
+    const exporter = new THREE.OBJExporter();
+
+    const offCanvas = document.createElement('canvas');
+    const offCtx = offCanvas.getContext('2d');
+
+    initThree();
+    animate();
+
+    function initThree() {
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x111111);
+
+      const width = viewer.clientWidth || window.innerWidth - 320;
+      const height = viewer.clientHeight || window.innerHeight;
+
+      camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+      camera.position.set(0, 0, 50);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(width, height);
+      viewer.appendChild(renderer.domElement);
+
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+
+      const hemiLight = new THREE.HemisphereLight(0xffffff, 0x202020, 0.8);
+      scene.add(hemiLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(10, 20, 10);
+      scene.add(dirLight);
+
+      window.addEventListener('resize', onWindowResize);
+    }
+
+    function onWindowResize() {
+      const width = viewer.clientWidth || window.innerWidth - 320;
+      const height = viewer.clientHeight || window.innerHeight;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+
+    // --- Gestion fichier ---
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const name = file.name.toLowerCase();
+      if (name.endsWith('.svg')) {
+        loadSVGFile(file);
+      } else if (name.endsWith('.png')) {
+        loadPNGFile(file);
+      } else {
+        info.textContent = "Format non supporté. Utilise SVG ou PNG.";
+      }
+    });
+
+    function loadSVGFile(file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const text = ev.target.result;
+        try {
+          const data = svgLoader.parse(text);
+          currentSVGPaths = data.paths;
+          currentType = 'svg';
+          info.textContent = `SVG chargé : ${file.name}`;
+          rebuildSVGMesh();
+        } catch (err) {
+          console.error(err);
+          info.textContent = "Erreur lors du parsing du SVG.";
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function loadPNGFile(file) {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          currentImage = img;
+          currentType = 'png';
+          info.textContent = `PNG chargé : ${file.name} (${img.width}x${img.height})`;
+          rebuildPNGMesh();
+        };
+        img.onerror = () => {
+          info.textContent = "Erreur lors du chargement du PNG.";
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // --- Reconstruction / extrusion SVG ---
+    function rebuildSVGMesh() {
+      if (!currentSVGPaths) return;
+      disposeCurrentMesh();
+
+      const depth = parseFloat(depthSlider.value);
+      const wireframe = wireframeCheckbox.checked;
+
+      const group = new THREE.Group();
+      for (const path of currentSVGPaths) {
+        const shapes = THREE.SVGLoader.createShapes(path);
+        for (const shape of shapes) {
+          const geom = new THREE.ExtrudeGeometry(shape, {
+            depth: depth,
+            bevelEnabled: false
+          });
+          geom.computeVertexNormals();
+          const mat = new THREE.MeshStandardMaterial({
+            color: 0xdddddd,
+            metalness: 0.1,
+            roughness: 0.8,
+            wireframe
+          });
+          const mesh = new THREE.Mesh(geom, mat);
+          group.add(mesh);
+        }
+      }
+
+      // Centrer
+      const box = new THREE.Box3().setFromObject(group);
+      const center = box.getCenter(new THREE.Vector3());
+      group.position.sub(center);
+
+      const scale = parseFloat(scaleSlider.value);
+      group.scale.set(scale, scale, scale);
+
+      scene.add(group);
+      currentMesh = group;
+    }
+
+    // --- Reconstruction / PNG basé sur la transparence (masque alpha) ---
+    function rebuildPNGMesh() {
+      if (!currentImage) return;
+      disposeCurrentMesh();
+
+      const depth = parseFloat(depthSlider.value);
+      const res = parseInt(resSlider.value, 10);
+      const wireframe = wireframeCheckbox.checked;
+
+      const alphaThreshold = 10; // 0..255 : <10 = transparent, >10 = plein
+
+      const aspect = currentImage.height / currentImage.width;
+      const w = res;
+      const h = Math.max(4, Math.round(res * aspect));
+
+      offCanvas.width = w;
+      offCanvas.height = h;
+      offCtx.clearRect(0, 0, w, h);
+      offCtx.drawImage(currentImage, 0, 0, w, h);
+
+      const imgData = offCtx.getImageData(0, 0, w, h).data;
+
+      const positions = [];
+      const solid = new Uint8Array(w * h);
+      const size = 20;
+
+      // Générer les points + masque de solidité (alpha)
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const idx = (y * w + x) * 4;
+          const r = imgData[idx];
+          const g = imgData[idx + 1];
+          const b = imgData[idx + 2];
+          const a = imgData[idx + 3];
+
+          const isSolid = a > alphaThreshold;
+          solid[y * w + x] = isSolid ? 1 : 0;
+
+          const px = (x / (w - 1) - 0.5) * size;
+          const py = (y / (h - 1) - 0.5) * -size * aspect;
+          const pz = isSolid ? depth : 0;
+
+          positions.push(px, py, pz);
+        }
+      }
+
+      // Triangles UNIQUEMENT quand les 3 sommets sont "solides"
+      const indices = [];
+      for (let y = 0; y < h - 1; y++) {
+        for (let x = 0; x < w - 1; x++) {
+          const a = y * w + x;
+          const b = a + 1;
+          const c = (y + 1) * w + x;
+          const d = c + 1;
+
+          if (solid[a] && solid[c] && solid[b]) indices.push(a, c, b);
+          if (solid[b] && solid[c] && solid[d]) indices.push(b, c, d);
+        }
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute(
+        'position',
+        new THREE.Float32BufferAttribute(positions, 3)
+      );
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xcccccc,
+        metalness: 0.1,
+        roughness: 0.9,
+        wireframe,
+        side: THREE.DoubleSide
+      });
+
+      const mesh = new THREE.Mesh(geometry, material);
+
+      // Centrer
+      const box = new THREE.Box3().setFromObject(mesh);
+      const center = box.getCenter(new THREE.Vector3());
+      mesh.position.sub(center);
+
+      const scale = parseFloat(scaleSlider.value);
+      mesh.scale.set(scale, scale, scale);
+
+      scene.add(mesh);
+      currentMesh = mesh;
+
+      info.textContent += ` | mask alpha ${w}x${h}`;
+    }
+
+    // --- Sliders ---
+    depthSlider.addEventListener('input', () => {
+      depthValue.textContent = depthSlider.value;
+      if (currentType === 'svg') rebuildSVGMesh();
+      if (currentType === 'png') rebuildPNGMesh();
+    });
+
+    scaleSlider.addEventListener('input', () => {
+      scaleValue.textContent = scaleSlider.value;
+      if (currentMesh) {
+        const s = parseFloat(scaleSlider.value);
+        currentMesh.scale.set(s, s, s);
+      }
+    });
+
+    resSlider.addEventListener('input', () => {
+      resValue.textContent = resSlider.value;
+      if (currentType === 'png') rebuildPNGMesh();
+    });
+
+    wireframeCheckbox.addEventListener('change', () => {
+      if (currentType === 'svg') rebuildSVGMesh();
+      if (currentType === 'png') rebuildPNGMesh();
+    });
+
+    // --- Export OBJ ---
+    exportBtn.addEventListener('click', () => {
+      if (!currentMesh) {
+        info.textContent = "Rien à exporter (charge un fichier d'abord).";
+        return;
+      }
+      const objText = exporter.parse(currentMesh);
+      const blob = new Blob([objText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'extruded.obj';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+      info.textContent = "OBJ exporté (extruded.obj).";
+    });
+
+    // --- Nettoyage mesh courant ---
+    function disposeCurrentMesh() {
+      if (!currentMesh) return;
+      currentMesh.traverse((child) => {
+        if (child.isMesh) {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            if (Array.isArray(child.material)) {
+              child.material.forEach((m) => m.dispose && m.dispose());
+            } else if (child.material.dispose) {
+              child.material.dispose();
+            }
+          }
+        }
+      });
+      scene.remove(currentMesh);
+      currentMesh = null;
+    }
+  </script>
+</body>
+</html>

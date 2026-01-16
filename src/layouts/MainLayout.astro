@@ -5,37 +5,63 @@ import Banner from "../components/HeaderP5.astro";
 
 import YukinaConfig from "../../yukina.config";
 import Footer from "../components/Footer.astro";
-import SideBar from "../components/SideBar.astro";
+// import SideBar from "../components/SideBar.astro"; // si besoin
 
 export interface Props {
   title?: string;
   subTitle?: string;
   bannerImage?: string;
-  image?: string,
+  image?: string;
   slug?: string;
-  bannerHeight?: string; 
+  bannerHeight?: string;
+
+  // SEO (optionnels)
+  seoTitle?: string;
+  seoDescription?: string;
+  seoImage?: string;
+  ogType?: "website" | "article";
+  canonical?: string;
+  noindex?: boolean;
 }
 
-const props = Astro.props;
+const {
+  title,
+  subTitle,
+  bannerImage,
+  image,
+  slug,
+  bannerHeight,
+
+  seoTitle = title,
+  seoDescription = subTitle,
+  seoImage = image ?? bannerImage,
+  ogType = "website",
+  canonical,
+  noindex = false,
+} = Astro.props;
 ---
 
-<Base>
-
+<Base
+  title={seoTitle}
+  description={seoDescription}
+  image={seoImage}
+  type={ogType}
+  canonical={canonical}
+  noindex={noindex}
+>
   <NavBar />
 
-  {
-    YukinaConfig.bannerStyle == "LOOP" && (
-      <div style={`--banner-height:${props.bannerHeight ?? "40svh"}`}>
-        <Banner
-          title={props.title}
-          subTitle={props.subTitle}
-          bannerImage={props.bannerImage}
-          slug={props.slug}
-        />
-      </div>                                                          
-    )
-  }
-          
+  {YukinaConfig.bannerStyle == "LOOP" && (
+    <div style={`--banner-height:${bannerHeight ?? "40svh"}`}>
+      <Banner
+        title={title}
+        subTitle={subTitle}
+        bannerImage={bannerImage}
+        slug={slug}
+      />
+    </div>
+  )}
+
   <div class="main-container my-10">
     <div class="flex flex-row items-start xl:space-x-4">
       <div class="space-y-8 min-w-0">
@@ -57,7 +83,7 @@ const props = Astro.props;
     margin-right: auto;
     padding-left: 16px;
     padding-right: 16px;
-    margin-bottom:0px;
+    margin-bottom: 0px;
   }
 
   /* Centre l'enfant du flex (là où il y a <main> + <Footer>) */

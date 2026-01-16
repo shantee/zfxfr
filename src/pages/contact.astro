@@ -1,146 +1,397 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
+
+const phone = "06.51.15.57.58";
 ---
 
-<MainLayout bannerHeight="22vh" title="Contact">
+<MainLayout
+  bannerHeight="22vh"
+  title="Contact"
+  seoTitle="Contact – Dépannage informatique à Vesoul / Pusey"
+  seoDescription="Contactez-moi pour un rendez-vous, un devis ou une question (Vesoul / Pusey)."
+>
   <div class="article-wrapper">
-    <div class="article" style="margin:auto;"></div>
-  <section id="contact">
-    <h1>Contact</h1>
+    <div class="article" style="margin:auto;">
+      <section id="contact">
 
-    <!-- Statut dynamique (JS) + fallback ?sent=ok|fail|... -->
-    <div id="form-status" class="alert" role="status" aria-live="polite" hidden></div>
+        <h1 class="ctc-title">
+          <span class="ctc-title-gradient">Contact</span>
+          <span class="ctc-title-suffix"> (devis / rendez-vous).</span>
+        </h1>
 
-    <form
-      id="contact-form"
-      action="/api.php"
-      method="POST"
-      enctype="multipart/form-data"
-      accept-charset="utf-8"
-      autocomplete="on"
-      novalidate
-    >
-      <div class="field">
-        <label for="email">E-mail</label>
-        <input id="email" name="email" type="email" required placeholder="votre-email@gmail.com" />
-      </div>
+        <p class="ctc-lead">
+          Vous pouvez utiliser ce formulaire pour prendre <strong>rendez-vous</strong>, demander un <strong>devis</strong> ou pour toute autre
+          <strong> question</strong>. N’hésitez pas !
+        </p>
 
-      <div class="field">
-        <label for="message">Message</label>
-        <textarea id="message" name="message" rows="6" required placeholder="Votre message…&#10;(N'hésitez pas à préciser votre n° de téléphone si vous souhaitez être rappelé)"></textarea>
-      </div>
+        <p class="ctc-lead ctc-lead--phone">
+          <span class="ctc-badge">Téléphone</span>
+          {" "}
+          Vous pouvez aussi me joindre au <span class="ctc-strong">{phone}</span>.
+        </p>
 
-      <!-- Upload fichier (optionnel) -->
-      <div class="field">
-        <label for="file">Fichier (optionnel)</label>
+        <div class="ctc-tip">
+          <p class="ctc-tip-text">
+            Astuce : indiquez si vous préférez une réponse <strong>par téléphone</strong> (et votre créneau idéal).
+          </p>
+        </div>
 
-        <!-- Zone glisser-déposer + input file -->
-        <div id="dropzone" class="dropzone" tabindex="0" role="button" aria-label="Déposer ou sélectionner un fichier">
-          <div class="dz-icon">⬆️</div>
-          <div class="dz-text">
-            <strong>Glisse-dépose</strong> ton fichier ici<br />
-            <span class="dz-sub">ou clique pour sélectionner</span>
+        {/* Statut dynamique (JS) + fallback ?sent=ok|fail|... */}
+        <div id="form-status" class="alert" role="status" aria-live="polite" hidden></div>
+
+        <form
+          id="contact-form"
+          class="ctc-form"
+          action="/api.php"
+          method="POST"
+          enctype="multipart/form-data"
+          accept-charset="utf-8"
+          autocomplete="on"
+          novalidate
+        >
+          <div class="ctc-field">
+            <label for="email" class="ctc-label">Votre adresse e-mail</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              placeholder="votre-email@gmail.com"
+              class="ctc-input"
+            />
           </div>
-          <input
-            id="file"
-            name="file"
-            type="file"
-            class="file-input"
-            accept=".jpg,.jpeg,.png,.gif,.pdf,.zip,.rar,.7z,.txt,.md,.doc,.docx,.xls,.xlsx"
-          />
-        </div>
 
-        <!-- Nom du fichier choisi -->
-        <div id="fileName" class="file-name" hidden></div>
+          <div class="ctc-field">
+            <label for="message" class="ctc-label">Message</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="7"
+              required
+              placeholder="Votre message…&#10;Ex : PC lent depuis 1 semaine, Windows 11, et j’aimerais un rendez-vous.&#10;(N’hésitez pas à laisser votre n° si vous souhaitez être rappelé)"
+              class="ctc-textarea"
+            ></textarea>
+          </div>
 
-        <!-- Barre de progression -->
-        <div id="progressWrap" class="progress-wrap" hidden>
-          <div id="progressBar" class="progress-bar"></div>
-          <span id="progressPct" class="progress-pct">0%</span>
-        </div>
+          {/* Upload fichier (optionnel) */}
+          <div class="ctc-field">
+            <label for="file" class="ctc-label">Fichier (optionnel)</label>
 
-        <small class="hint">Max ~10 Mo. Types autorisés : images, PDF, archives, texte, Office.</small>
-      </div>
+            <div
+              id="dropzone"
+              class="ctc-dropzone"
+              tabindex="0"
+              role="button"
+              aria-label="Déposer ou sélectionner un fichier"
+            >
+              <div class="ctc-dz-icon">⬆️</div>
+              <div class="ctc-dz-text">
+                <strong>Glissez-déposez</strong> votre fichier ici<br />
+                <span class="ctc-dz-sub">ou cliquez pour sélectionner</span>
+              </div>
 
-      <!-- Honeypot anti-spam (doit rester vide) -->
-      <div class="hp">
-        <label for="website">Site web</label>
-        <input id="website" name="website" type="text" autocomplete="off" />
-      </div>
+              <input
+                id="file"
+                name="file"
+                type="file"
+                class="ctc-file-input"
+                accept=".jpg,.jpeg,.png,.gif,.pdf,.zip,.rar,.7z,.txt,.md,.doc,.docx,.xls,.xlsx"
+              />
+            </div>
 
-      <button type="submit" class="btn">Envoyer</button>
-    </form>
+            <div id="fileName" class="ctc-file-name" hidden></div>
 
-    <p class="note">* Vos informations ne sont utilisées que pour répondre à votre message.</p>
-  </section>
+            <div id="progressWrap" class="ctc-progress-wrap" hidden>
+              <div id="progressBar" class="ctc-progress-bar"></div>
+              <span id="progressPct" class="ctc-progress-pct">0%</span>
+            </div>
+
+            <small class="ctc-hint">
+              Max ~10 Mo. Types autorisés : images, PDF, archives, texte, Office.
+            </small>
+          </div>
+
+          {/* Honeypot anti-spam (doit rester vide) */}
+          <div class="ctc-hp">
+            <label for="website">Site web</label>
+            <input id="website" name="website" type="text" autocomplete="off" />
+          </div>
+
+          <div class="ctc-actions">
+            <button type="submit" class="ctc-btn">Envoyer</button>
+           
+          </div>
+        </form>
+
+        <p class="ctc-note">
+          * Vos informations ne sont utilisées que pour répondre à votre message.
+        </p>
+
+      </section>
+    </div>
   </div>
-</div>
 </MainLayout>
 
-<style>
-  /* Wrapper et centrage */
-  #contact { max-width: 760px; margin: 40px auto; padding: 0 16px; }
-  h1 { margin: 0 0 1rem 0; font-size: 2rem; }
+{/* Structure globale identique à tes autres pages (OK) */}
+<style is:global>
+  .main-container > .flex.flex-row.items-start > .space-y-8 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
-  /* Messages d’alerte */
-  .alert { border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem;
-           background: var(--card-color); color: var(--text-color);
-           border: 1px dashed rgba(127,127,127,.35); }
+  .article-wrapper {
+    @apply mx-3 rounded-2xl bg-[var(--card-color)] px-5 py-6 lg:mx-0 lg:px-10 lg:py-9;
+  }
+
+  .article {
+    @apply flex flex-col;
+    font-size: var(--primary-font);
+  }
+</style>
+
+{/* Styles CONTACT uniquement (scopés => n’affectent pas le footer/header/menu) */}
+<style>
+  #contact {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .ctc-title {
+    margin: 0 0 0.75rem 0;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-size: 1.75rem;
+  }
+  @media (min-width: 768px) { .ctc-title { font-size: 2.1rem; } }
+  @media (min-width: 1024px) { .ctc-title { font-size: 2.4rem; } }
+
+  .ctc-title-gradient {
+    background: linear-gradient(90deg, #60a5fa, #65a30d);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .ctc-title-suffix {
+    color: #3b82f6;
+  }
+  :global(.dark) .ctc-title-suffix {
+    color: #93c5fd;
+  }
+
+  .ctc-lead {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #374151;
+    margin: 0;
+  }
+  @media (min-width: 1024px) { .ctc-lead { font-size: 1.25rem; } }
+  :global(.dark) .ctc-lead { color: #9ca3af; }
+
+  .ctc-lead--phone { margin-top: 1rem; }
+
+  .ctc-badge {
+    display: inline-block;
+    border-radius: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    font-weight: 700;
+    background: rgba(59,130,246,.10);
+    color: #1d4ed8;
+  }
+  :global(.dark) .ctc-badge {
+    background: rgba(30,58,138,.35);
+    color: #93c5fd;
+  }
+  .ctc-strong { font-weight: 800; }
+
+  .ctc-tip {
+    margin-top: 1.25rem;
+    padding: 1.1rem 1.2rem;
+    border-radius: 1rem;
+    background: rgba(59,130,246,.10);
+  }
+  :global(.dark) .ctc-tip {
+    background: rgba(30,58,138,.25);
+  }
+  .ctc-tip-text {
+    margin: 0;
+    font-size: 1.125rem;
+    color: #111827;
+  }
+  @media (min-width: 1024px) { .ctc-tip-text { font-size: 1.25rem; } }
+  :global(.dark) .ctc-tip-text { color: #e5e7eb; }
+
+  /* alert */
+  .alert {
+    margin-top: 1.25rem;
+    border-radius: 1rem;
+    padding: 0.9rem 1rem;
+    background: color-mix(in oklab, var(--card-color) 92%, transparent);
+    color: var(--text-color);
+    border: 1px dashed rgba(127,127,127,.35);
+  }
   .alert.success { border-color: #3cb37199; }
   .alert.error   { border-color: #ff6b6b99; }
 
-  /* Formulaire */
-  form { display: grid; gap: 16px; }
-  .field { display: grid; gap: 6px; }
-  label { font-weight: 600; color: var(--text-color); }
-
-  input[type="text"], input[type="email"], textarea {
-    width: 100%; padding: 10px 12px; border-radius: 10px;
-    border: 1px solid rgba(127,127,127,.35);
-    background: var(--card-color); color: var(--text-color); outline: none;
+  /* form */
+  .ctc-form {
+    margin-top: 1.25rem;
+    display: grid;
+    gap: 16px;
   }
-  input::placeholder, textarea::placeholder { color: var(--text-color-lighten); }
+  .ctc-field {
+    display: grid;
+    gap: 8px;
+  }
+  .ctc-label {
+    font-weight: 700;
+    color: #111827;
+  }
+  :global(.dark) .ctc-label { color: #ffffff; }
 
-  .btn { display: inline-block; border: 0; border-radius: 12px; padding: 10px 16px;
-         background: var(--primary-color); color: white; cursor: pointer; font-weight: 700; }
-  .btn:hover { filter: brightness(1.05); }
+  .ctc-input, .ctc-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(127,127,127,.28);
+    background: color-mix(in oklab, var(--card-color) 94%, transparent);
+    color: var(--text-color);
+    outline: none;
+  }
+  .ctc-input::placeholder, .ctc-textarea::placeholder { color: var(--text-color-lighten); }
 
-  /* Honeypot caché */
-  .hp { position: absolute; left: -9999px; visibility: hidden; height: 0; overflow: hidden; }
+  .ctc-input:focus, .ctc-textarea:focus {
+    border-color: color-mix(in oklab, var(--primary-color), white 35%);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color), transparent 75%);
+  }
 
-  /* Dropzone */
-  .dropzone {
-    position: relative; display: grid; place-items: center; gap: .25rem;
-    border: 1px dashed rgba(127,127,127,.45); border-radius: 12px; padding: 18px;
+  /* honeypot hidden */
+  .ctc-hp {
+    position: absolute;
+    left: -9999px;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+  }
+
+  /* dropzone */
+  .ctc-dropzone {
+    position: relative;
+    display: grid;
+    place-items: center;
+    gap: 0.25rem;
+    border: 1px dashed rgba(127,127,127,.45);
+    border-radius: 18px;
+    padding: 18px;
     background: color-mix(in oklab, var(--card-color) 92%, transparent);
-    cursor: pointer; transition: border-color .2s, background .2s, transform .05s ease;
+    cursor: pointer;
+    transition: border-color .2s, background .2s, transform .05s ease;
     user-select: none;
   }
-  .dropzone:focus-visible { outline: 2px solid color-mix(in oklab, var(--primary-color), white 40%); outline-offset: 2px; }
-  .dropzone:hover { border-color: var(--primary-color); }
-  .dropzone.dragover { border-color: var(--primary-color); background: color-mix(in oklab, var(--card-color) 85%, var(--primary-color) 15%); }
-  .dz-icon { font-size: 1.35rem; opacity: .9; }
-  .dz-text { text-align: center; color: var(--text-color); font-size: .95rem; line-height: 1.2; }
-  .dz-sub { color: var(--text-color-lighten); font-weight: 500; }
+  .ctc-dropzone:focus-visible {
+    outline: 2px solid color-mix(in oklab, var(--primary-color), white 40%);
+    outline-offset: 2px;
+  }
+  .ctc-dropzone:hover { border-color: var(--primary-color); }
+  .ctc-dropzone.dragover {
+    border-color: var(--primary-color);
+    background: color-mix(in oklab, var(--card-color) 85%, var(--primary-color) 15%);
+  }
+  .ctc-dz-icon { font-size: 1.35rem; opacity: .9; }
+  .ctc-dz-text { text-align: center; color: var(--text-color); font-size: 1rem; line-height: 1.2; }
+  .ctc-dz-sub { color: var(--text-color-lighten); font-weight: 500; }
 
-  .file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .ctc-file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
-  .file-name {
-    margin-top: .35rem; font-size: .9rem; padding: 6px 10px; border-radius: 10px;
+  .ctc-file-name {
+    margin-top: .35rem;
+    font-size: .95rem;
+    padding: 8px 12px;
+    border-radius: 14px;
     background: color-mix(in oklab, var(--card-color) 94%, transparent);
     border: 1px solid rgba(127,127,127,.25);
     color: var(--text-color);
   }
-  .hint { color: var(--text-color-lighten); }
 
-  /* Progress bar */
-  .progress-wrap { position: relative; height: 12px; background: rgba(127,127,127,.2);
-                   border-radius: 999px; overflow: hidden; margin-top: .35rem; }
-  .progress-bar { height: 100%; width: 0%;
-                  background: linear-gradient(90deg, var(--primary-color), color-mix(in oklab, var(--primary-color), white 20%));
-                  border-radius: 999px; transition: width .15s ease; }
-  .progress-pct { position: absolute; inset: 0; display: grid; place-items: center;
-                  font-size: .78rem; color: white; text-shadow: 0 1px 2px rgba(0,0,0,.35); }
+  .ctc-hint { color: var(--text-color-lighten); font-size: .9rem; }
+
+  /* progress bar */
+  .ctc-progress-wrap {
+    position: relative;
+    height: 12px;
+    background: rgba(127,127,127,.2);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: .5rem;
+  }
+  .ctc-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(
+      90deg,
+      var(--primary-color),
+      color-mix(in oklab, var(--primary-color), white 20%)
+    );
+    border-radius: 999px;
+    transition: width .15s ease;
+  }
+  .ctc-progress-pct {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: .78rem;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,.35);
+  }
+
+  /* actions */
+.ctc-actions{
+  display: flex;
+  flex-direction: column; /* empile */
+  align-items: center;    /* centre horizontalement */
+  gap: 0.6rem;
+}
+  .ctc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.9rem;
+    padding: 0.7rem 1.1rem;
+    font-weight: 800;
+    background: var(--primary-color, #3b82f6);
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .ctc-btn:hover { opacity: .92; }
+
+  .ctc-a {
+    font-weight: 700;
+    color: #2563eb;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-color: rgba(147,197,253,.7);
+  }
+  .ctc-a:hover {
+    color: #1d4ed8;
+    text-decoration-color: rgba(59,130,246,.9);
+  }
+  :global(.dark) .ctc-a {
+    color: #60a5fa;
+    text-decoration-color: rgba(59,130,246,.55);
+  }
+  :global(.dark) .ctc-a:hover {
+    color: #93c5fd;
+    text-decoration-color: rgba(147,197,253,.8);
+  }
+
+  .ctc-note {
+    margin-top: 1.25rem;
+    font-size: 0.9rem;
+    color: var(--text-color-lighten);
+    opacity: 0.9;
+  }
 </style>
 
 <script is:raw>
@@ -198,6 +449,7 @@ import MainLayout from "../layouts/MainLayout.astro";
       }
     });
     input.addEventListener('change', () => setFileName(input.files[0]));
+
     function setFileName(file) {
       if (!file) { nameEl.hidden = true; nameEl.textContent = ''; return; }
       nameEl.textContent = `📎 ${file.name} — ${(file.size/1048576).toFixed(2)} Mo`;
@@ -211,8 +463,11 @@ import MainLayout from "../layouts/MainLayout.astro";
       e.preventDefault();
       clearStatus();
 
-      // Afficher la barre si présente
-      if (pWrap) { pWrap.hidden = false; pBar.style.width = '0%'; if (pPct) pPct.textContent = '0%'; }
+      if (pWrap) {
+        pWrap.hidden = false;
+        pBar.style.width = '0%';
+        if (pPct) pPct.textContent = '0%';
+      }
 
       const data = new FormData(form);
       const xhr = new XMLHttpRequest();
@@ -246,17 +501,3 @@ import MainLayout from "../layouts/MainLayout.astro";
     });
   })();
 </script>
-<style is:global>
-  .main-container > .flex.flex-row.items-start > .space-y-8 {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-  .article-wrapper {
-    @apply mx-3 rounded-2xl bg-[var(--card-color)] px-5 py-6 lg:mx-0 lg:px-10 lg:py-9;
-  }
-  .article {
-    @apply flex flex-col;
-    font-size: var(--primary-font);
-  }
-  
-</style>

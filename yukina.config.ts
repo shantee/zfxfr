@@ -21,14 +21,19 @@ const YukinaConfig: Configuration = {
       // NOUVEAU : menu Services + sous-menu Tarifs
       nameKey: I18nKeys.nav_bar_services,
       href: "/services",
-      children: [
-        { nameKey: I18nKeys.nav_bar_tarifs, href: "/tarifs" },
-      ],
+      children: [{ nameKey: I18nKeys.nav_bar_tarifs, href: "/tarifs" }],
     },
     {
       nameKey: I18nKeys.nav_bar_contact,
       href: "/contact",
     },
+
+    // ✅ NOUVEAU : Présentation
+    {
+      nameKey: I18nKeys.nav_bar_presentation,
+      href: "/presentation",
+    },
+
     {
       nameKey: I18nKeys.nav_bar_blog,
       href: "/blog",
@@ -50,7 +55,7 @@ const YukinaConfig: Configuration = {
     {
       icon: "line-md:youtube",
       link: "https://www.youtube.com/@limace",
-    }
+    },
   ],
   maxSidebarCategoryChip: 6, // It is recommended to set it to a common multiple of 2 and 3
   maxSidebarTagChip: 12,

@@ -11,6 +11,10 @@ enum I18nKeys {
   nav_bar_blog = "nav_bar_blog",
   nav_bar_services = "nav_bar_services",
   nav_bar_tarifs = "nav_bar_tarifs",
+
+  // ✅ NOUVEAU : Présentation
+  nav_bar_presentation = "nav_bar_presentation",
+
   nav_bar_about = "nav_bar_about",
   nav_bar_github = "nav_bar_github",
   nav_bar_search_placeholder = "nav_bar_search_placeholder",

@@ -1,10 +1,23 @@
 ---
 import YukinaConfig from "../../yukina.config";
 import BaseHead from "../components/BaseHead.astro";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  type?: "website" | "article";
+  canonical?: string;
+  noindex?: boolean;
+}
+
+const props = Astro.props;
 ---
 
 <html lang={YukinaConfig.locale}>
-  <BaseHead />
+  <head>
+    <BaseHead {...props} />
+  </head>
   <body class="overflow-y-hidden">
     <slot />
   </body>
@@ -15,7 +28,7 @@ import BaseHead from "../components/BaseHead.astro";
     @apply bg-[var(--background-color)];
     overflow-x: hidden;
   }
-  html{
+  html {
     overflow-x: hidden;
   }
 </style>

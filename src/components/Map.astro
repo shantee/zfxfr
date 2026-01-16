@@ -1,13 +1,26 @@
 ---
 export interface Props {
   lat?: number; lng?: number; zoom?: number;
+
+  // ✅ nouveaux réglages
+  minZoom?: number; maxZoom?: number;
+  scrollWheelZoom?: boolean;      // zoom molette (si clickToWheelZoom = false)
+  clickToWheelZoom?: boolean;     // molette active seulement après clic
+
   radiusKm?: number; popup?: string;
   marker?: boolean; circle?: boolean;
   class?: string; style?: string;
   height?: number; heightMd?: number; heightLg?: number;
 }
+
 const {
   lat = 47.64, lng = 6.12, zoom = 2,
+
+  // ✅ defaults : ne change rien tant que tu ne passes pas les props
+  minZoom = 0, maxZoom = 20,
+  scrollWheelZoom = true,
+  clickToWheelZoom = false,
+
   radiusKm = 15, popup = "Interventions autour de Vesoul",
   marker = true, circle = true,
   class: klass = "", style,
@@ -19,9 +32,13 @@ const {
   <div
     class={`leaflet-map rounded-2xl overflow-hidden ${klass}`}
     style={`--h:${height}px;--h-md:${heightMd}px;--h-lg:${heightLg}px;${style ?? ""}`}
-    data-lat={lat} data-lng={lng} data-zoom={zoom}
-    data-radius-km={radiusKm} data-popup={popup}
-    data-marker={marker} data-circle={circle}
+    data-lat={String(lat)} data-lng={String(lng)} data-zoom={String(zoom)}
+    data-min-zoom={String(minZoom)} data-max-zoom={String(maxZoom)}
+    data-scroll-wheel-zoom={scrollWheelZoom ? "true" : "false"}
+    data-click-to-wheel-zoom={clickToWheelZoom ? "true" : "false"}
+    data-radius-km={String(radiusKm)} data-popup={popup}
+    data-marker={marker ? "true" : "false"}
+    data-circle={circle ? "true" : "false"}
   ></div>
 
   <noscript>
@@ -46,31 +63,69 @@ const {
       document.head.appendChild(link);
     }
 
+    function asNumber(v, fallback) {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : fallback;
+    }
+    function asInt(v, fallback) {
+      const n = parseInt(String(v ?? ''), 10);
+      return Number.isFinite(n) ? n : fallback;
+    }
+    function asBool(v, fallback) {
+      if (v == null) return fallback;
+      const s = String(v).trim().toLowerCase();
+      if (s === 'true' || s === '1' || s === 'yes' || s === 'on') return true;
+      if (s === 'false' || s === '0' || s === 'no' || s === 'off') return false;
+      return fallback;
+    }
+
     function init() {
-      const lat = parseFloat(el.dataset.lat);
-      const lng = parseFloat(el.dataset.lng);
-      const zoom = parseInt(el.dataset.zoom, 10);
-      const radiusKm = parseFloat(el.dataset.radiusKm);
-      const showMarker = el.dataset.marker === 'true';
-      const showCircle = el.dataset.circle === 'true';
-      const popup = el.dataset.popup;
-const map = L.map(el).setView([lat, lng], zoom);           // scrollWheelZoom est true par défaut
-// ou, si tu préfères être explicite :
-// const map = L.map(el, { scrollWheelZoom: true }).setView([lat, lng], zoom);
-// désactive le zoom avec la molette
- //     const map = L.map(el, { scrollWheelZoom: false }).setView([lat, lng], zoom);
+      const lat = asNumber(el.dataset.lat, 47.64);
+      const lng = asNumber(el.dataset.lng, 6.12);
+      const zoom = asInt(el.dataset.zoom, 2);
+
+      const minZoom = asInt(el.dataset.minZoom, 0);
+      const maxZoom = asInt(el.dataset.maxZoom, 20);
+
+      const scrollWheelZoom = asBool(el.dataset.scrollWheelZoom, true);
+      const clickToWheelZoom = asBool(el.dataset.clickToWheelZoom, false);
+
+      const radiusKm = asNumber(el.dataset.radiusKm, 0);
+      const showMarker = asBool(el.dataset.marker, true);
+      const showCircle = asBool(el.dataset.circle, true);
+      const popup = el.dataset.popup || '';
+
+      // ✅ si clickToWheelZoom: on démarre molette OFF pour laisser la page défiler
+      const map = L.map(el, {
+        minZoom,
+        maxZoom,
+        scrollWheelZoom: clickToWheelZoom ? false : scrollWheelZoom,
+      }).setView([lat, lng], zoom);
+
+      // sécurité (au cas où)
+      map.setMinZoom(minZoom);
+      map.setMaxZoom(maxZoom);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 20, detectRetina: true,
-       // attribution: '&copy; OpenStreetMap contributors',
+        maxZoom: 20,
+        detectRetina: true,
+        // attribution: '&copy; OpenStreetMap contributors',
       }).addTo(map);
 
       if (showMarker) {
         const m = L.marker([lat, lng]).addTo(map);
         if (popup) m.bindPopup(popup);
       }
+
       if (showCircle && radiusKm > 0) {
         L.circle([lat, lng], { radius: radiusKm * 1000, weight: 2, fillOpacity: 0.08 }).addTo(map);
+      }
+
+      // ✅ Molette active seulement après clic, et se coupe quand on sort de la carte
+      if (clickToWheelZoom) {
+        map.scrollWheelZoom.disable();
+        map.on('click', () => map.scrollWheelZoom.enable());
+        el.addEventListener('mouseleave', () => map.scrollWheelZoom.disable());
       }
     }
 
@@ -85,6 +140,7 @@ const map = L.map(el).setView([lat, lng], zoom);           // scrollWheelZoom es
         s.onload = init;
         document.head.appendChild(s);
       } else {
+        // si le script existe déjà, on init quand même (si déjà chargé => window.L existe et on passe dans le else)
         s.addEventListener('load', init, { once: true });
       }
     } else {

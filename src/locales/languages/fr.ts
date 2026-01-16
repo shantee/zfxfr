@@ -12,6 +12,9 @@ export const fr: Translation = {
   [key.nav_bar_blog]: "Blog",
   [key.nav_bar_services]: "Services",
   [key.nav_bar_tarifs]: "Tarifs",
+
+  [key.nav_bar_presentation]: "Présentation",
+
   [key.nav_bar_about]: "À propos",
   [key.nav_bar_github]: "GitHub",
   [key.nav_bar_search_placeholder]: "Rechercher",
