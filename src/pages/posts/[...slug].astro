@@ -6,13 +6,38 @@ import { render } from "astro:content";
 
 export async function getStaticPaths() {
   const postEntries = await getCollection("posts");
-  return postEntries.map((entry) => ({
-    params: { slug: IdToSlug(entry.id) },
-    props: { entry },
-  }));
+  const sortedPosts = postEntries.sort(
+    (a, b) =>
+      new Date(b.data.published).valueOf() -
+      new Date(a.data.published).valueOf(),
+  );
+
+  return sortedPosts.map((entry, i) => {
+    const prevEntry = i < sortedPosts.length - 1 ? sortedPosts[i + 1] : null;
+    const nextEntry = i > 0 ? sortedPosts[i - 1] : null;
+
+    const prevPost = prevEntry
+      ? {
+          data: { title: prevEntry.data.title },
+          slug: IdToSlug(prevEntry.id),
+        }
+      : null;
+
+    const nextPost = nextEntry
+      ? {
+          data: { title: nextEntry.data.title },
+          slug: IdToSlug(nextEntry.id),
+        }
+      : null;
+
+    return {
+      params: { slug: IdToSlug(entry.id) },
+      props: { entry, prevPost, nextPost },
+    };
+  });
 }
 
-const { entry } = Astro.props;
+const { entry, prevPost, nextPost } = Astro.props;
 const { Content } = await render(entry);
 ---
 
@@ -23,6 +48,8 @@ const { Content } = await render(entry);
       subTitle={entry.data.description}
       bannerImage={entry.data.cover}
       published={entry.data.published}
+      prevPost={prevPost}
+      nextPost={nextPost}
     >
       <div
         class="hidden"
@@ -48,6 +75,8 @@ const { Content } = await render(entry);
       license={{ name: entry.data.licenseName, url: entry.data.licenseUrl }}
       author={entry.data.author}
       sourceLink={entry.data.sourceLink}
+      prevPost={prevPost}
+      nextPost={nextPost}
     >
       <div
         class="hidden"

@@ -12,6 +12,12 @@ enum I18nKeys {
   nav_bar_services = "nav_bar_services",
   nav_bar_tarifs = "nav_bar_tarifs",
 
+  // ✅ NOUVEAU : sous-menus Services
+  nav_bar_cours_informatique = "nav_bar_cours_informatique",
+  nav_bar_formations = "nav_bar_formations",
+  nav_bar_assistance_numerique = "nav_bar_assistance_numerique",
+  nav_bar_coaching_digital = "nav_bar_coaching_digital",
+
   // ✅ NOUVEAU : Présentation
   nav_bar_presentation = "nav_bar_presentation",
 

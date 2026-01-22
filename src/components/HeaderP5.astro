@@ -33,7 +33,7 @@ const poster = "/images/header-poster.webp"; // fallback si motion réduite
   </div>
 
   <!-- p5 depuis CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/p5@1.9.3/lib/p5.min.js" defer></script>
+  <script src="/scripts/q5.min.js" defer></script>
 
  <script is:inline>
 (() => {
@@ -147,9 +147,10 @@ const poster = "/images/header-poster.webp"; // fallback si motion réduite
     holder = document.getElementById('p5-holder');
     const r = holder.getBoundingClientRect();
     dpr = Math.min(2, window.devicePixelRatio || 1);
-    pixelDensity(dpr);
+   
     cnv = createCanvas(Math.max(1, r.width|0), Math.max(1, r.height|0));
     cnv.parent('p5-holder');
+     pixelDensity(dpr);
     computeLayout();
   };
 

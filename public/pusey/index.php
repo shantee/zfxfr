@@ -236,7 +236,7 @@ $base = base_url();
               <td class="btns">
                 <a class="btn" href="<?= $href ?>" target="_blank" rel="noopener noreferrer">Ouvrir</a>
                 <a class="btn primary" href="?dl=<?= rawurlencode($f) ?>">Télécharger</a>
-                <button class="btn copy" type="button" data-url="<?= htmlspecialchars($abs) ?>">Copier le lien</button>
+                <button aria-label="copier le lien" aria-hidden="true" class="btn copy" type="button" data-url="<?= htmlspecialchars($abs) ?>">Copier le lien</button>
               </td>
             </tr>
             <?php endforeach; ?>

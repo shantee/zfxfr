@@ -11,12 +11,15 @@ export interface Props {
   marker?: boolean; circle?: boolean;
   class?: string; style?: string;
   height?: number; heightMd?: number; heightLg?: number;
+  
+  // 🚀 Optimisation : Image affichée avant le chargement (capture d'écran)
+  placeholderImg?: string;
 }
 
 const {
   lat = 47.64, lng = 6.12, zoom = 2,
 
-  // ✅ defaults : ne change rien tant que tu ne passes pas les props
+  // ✅ defaults
   minZoom = 0, maxZoom = 20,
   scrollWheelZoom = true,
   clickToWheelZoom = false,
@@ -25,13 +28,19 @@ const {
   marker = true, circle = true,
   class: klass = "", style,
   height = 360, heightMd = 420, heightLg = 480,
+  
+  // Image par défaut ou vide (si vide, fond gris)
+  placeholderImg = "" 
 } = Astro.props;
+
+// Construction du style pour l'image de placeholder
+const bgStyle = placeholderImg ? `background-image: url('${placeholderImg}'); background-size: cover; background-position: center;` : 'background-color: #e5e7eb;';
 ---
 
-<div data-map-root>
+<div data-map-root class="relative group">
   <div
     class={`leaflet-map rounded-2xl overflow-hidden ${klass}`}
-    style={`--h:${height}px;--h-md:${heightMd}px;--h-lg:${heightLg}px;${style ?? ""}`}
+    style={`--h:${height}px;--h-md:${heightMd}px;--h-lg:${heightLg}px; ${bgStyle} ${style ?? ""}`}
     data-lat={String(lat)} data-lng={String(lng)} data-zoom={String(zoom)}
     data-min-zoom={String(minZoom)} data-max-zoom={String(maxZoom)}
     data-scroll-wheel-zoom={scrollWheelZoom ? "true" : "false"}
@@ -39,10 +48,14 @@ const {
     data-radius-km={String(radiusKm)} data-popup={popup}
     data-marker={marker ? "true" : "false"}
     data-circle={circle ? "true" : "false"}
-  ></div>
+  >
+  <div class="map-loading-indicator w-full h-full flex items-center justify-center text-gray-800 font-medium text-sm bg-white/60 backdrop-blur-sm">
+    Chargement de la carte...
+</div>
+  </div>
 
   <noscript>
-    <a href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=${zoom}/${lat}/${lng}`} target="_blank" rel="noopener">
+    <a href={`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=${zoom}/${lat}/${lng}`} target="_blank" rel="noopener" class="block p-4 text-center underline">
       Voir la carte (nécessite JavaScript)
     </a>
   </noscript>
@@ -54,23 +67,9 @@ const {
     const el = root.querySelector('.leaflet-map');
     if (!el) return;
 
-    // Injecte Leaflet CSS une seule fois
-    if (!document.querySelector('link[data-leaflet]')) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      link.setAttribute('data-leaflet', '');
-      document.head.appendChild(link);
-    }
-
-    function asNumber(v, fallback) {
-      const n = Number(v);
-      return Number.isFinite(n) ? n : fallback;
-    }
-    function asInt(v, fallback) {
-      const n = parseInt(String(v ?? ''), 10);
-      return Number.isFinite(n) ? n : fallback;
-    }
+    // Helpers de conversion
+    function asNumber(v, fallback) { const n = Number(v); return Number.isFinite(n) ? n : fallback; }
+    function asInt(v, fallback) { const n = parseInt(String(v ?? ''), 10); return Number.isFinite(n) ? n : fallback; }
     function asBool(v, fallback) {
       if (v == null) return fallback;
       const s = String(v).trim().toLowerCase();
@@ -79,37 +78,37 @@ const {
       return fallback;
     }
 
-    function init() {
+    // 1. Initialisation réelle de la carte (lancée après chargement des scripts)
+    function initMap() {
+      // Nettoyage de l'indicateur de chargement visuel
+      const loader = el.querySelector('.map-loading-indicator');
+      if(loader) loader.remove();
+
       const lat = asNumber(el.dataset.lat, 47.64);
       const lng = asNumber(el.dataset.lng, 6.12);
       const zoom = asInt(el.dataset.zoom, 2);
-
       const minZoom = asInt(el.dataset.minZoom, 0);
       const maxZoom = asInt(el.dataset.maxZoom, 20);
-
       const scrollWheelZoom = asBool(el.dataset.scrollWheelZoom, true);
       const clickToWheelZoom = asBool(el.dataset.clickToWheelZoom, false);
-
       const radiusKm = asNumber(el.dataset.radiusKm, 0);
       const showMarker = asBool(el.dataset.marker, true);
       const showCircle = asBool(el.dataset.circle, true);
       const popup = el.dataset.popup || '';
 
-      // ✅ si clickToWheelZoom: on démarre molette OFF pour laisser la page défiler
       const map = L.map(el, {
         minZoom,
         maxZoom,
         scrollWheelZoom: clickToWheelZoom ? false : scrollWheelZoom,
       }).setView([lat, lng], zoom);
 
-      // sécurité (au cas où)
       map.setMinZoom(minZoom);
       map.setMaxZoom(maxZoom);
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 20,
         detectRetina: true,
-        // attribution: '&copy; OpenStreetMap contributors',
+        attribution: '',
       }).addTo(map);
 
       if (showMarker) {
@@ -121,7 +120,6 @@ const {
         L.circle([lat, lng], { radius: radiusKm * 1000, weight: 2, fillOpacity: 0.08 }).addTo(map);
       }
 
-      // ✅ Molette active seulement après clic, et se coupe quand on sort de la carte
       if (clickToWheelZoom) {
         map.scrollWheelZoom.disable();
         map.on('click', () => map.scrollWheelZoom.enable());
@@ -129,23 +127,52 @@ const {
       }
     }
 
-    // Charge Leaflet JS si nécessaire, puis init
-    if (typeof window.L === 'undefined') {
-      let s = document.querySelector('script[data-leaflet]');
-      if (!s) {
-        s = document.createElement('script');
-        s.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-        s.defer = true;
-        s.setAttribute('data-leaflet', '');
-        s.onload = init;
-        document.head.appendChild(s);
-      } else {
-        // si le script existe déjà, on init quand même (si déjà chargé => window.L existe et on passe dans le else)
-        s.addEventListener('load', init, { once: true });
+    // 2. Fonction pour charger les ressources (CSS/JS)
+    function loadResources() {
+      // Injecte CSS si absent
+      if (!document.querySelector('link[data-leaflet]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = '/scripts/leaflet.css';
+        link.setAttribute('data-leaflet', '');
+        document.head.appendChild(link);
       }
-    } else {
-      init();
+
+      // Gestion du Script JS
+      if (typeof window.L === 'undefined') {
+        let s = document.querySelector('script[data-leaflet]');
+        if (!s) {
+          s = document.createElement('script');
+          s.src = '/scripts/leaflet.js';
+          s.defer = true;
+          s.setAttribute('data-leaflet', '');
+          // Une fois chargé, on init
+          s.onload = initMap;
+          document.head.appendChild(s);
+        } else {
+          // Script déjà en cours de chargement ailleurs
+          s.addEventListener('load', initMap);
+        }
+      } else {
+        // Déjà chargé
+        initMap();
+      }
     }
+
+    // 3. Intersection Observer : ne déclenche loadResources que si visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          loadResources();
+          observer.disconnect(); // On arrête d'observer une fois lancé
+        }
+      });
+    }, { 
+      rootMargin: "200px" // Charge 200px avant que l'élément n'arrive à l'écran
+    });
+
+    observer.observe(el);
+
   })();
   </script>
 </div>
@@ -154,4 +181,7 @@ const {
 .leaflet-map { height: var(--h, 360px); }
 @media (min-width: 768px)  { .leaflet-map { height: var(--h-md, 420px); } }
 @media (min-width: 1024px) { .leaflet-map { height: var(--h-lg, 480px); } }
+
+/* Transition douce pour cacher le loader quand le canvas leaflet arrive par dessus */
+.leaflet-container { z-index: 10; } 
 </style>

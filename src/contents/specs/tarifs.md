@@ -1,6 +1,6 @@
 ---
-title: "Tarifs"
-description: "Des ordres de grandeur, sur devis selon votre situation."
+title: "Tarifs : cours,formations, assistance numérique et dépannage informatique"
+description: "Mes tarifs dépannage informatique (Pusey 70) / cours, formations et assistance numérique"
 ---
 
 <div class="space-y-6">

@@ -1,110 +1,60 @@
 ---
 import { Icon } from "astro-icon/components";
-import YukinaConfig from "../../../yukina.config";
-import I18nKeys from "../../locales/keys";
-import { i18n } from "../../locales/translation";
-import { formatDate } from "../../utils/date";
 
+// On définit à quoi ressemble un "Post" (adapté aux collections de contenu Astro)
 export interface Props {
-  title: string;
-  published: Date;
-  license?: {
-    name: string;
-    url?: string;
-  };
-  sourceLink?: string;
-  author?: string;
+  prevPost?: {
+    data: { title: string };
+    slug: string;
+  } | null;
+  nextPost?: {
+    data: { title: string };
+    slug: string;
+  } | null;
 }
 
-const { title, published, license, author, sourceLink } = Astro.props;
+const { prevPost, nextPost } = Astro.props;
 ---
 
-<div
-  class="fonts relative mt-4 h-32 w-full rounded-lg bg-gray-100 px-4 py-4 lg:h-36 dark:bg-[var(--background-color)]"
->
-  <div
-    class="absolute left-4 top-4 z-10 flex h-24 flex-col justify-between lg:h-28"
-  >
-    <div class="flex flex-col items-start space-y-1">
-      <p class="!my-0 pl-1 font-bold text-[var(--text-color)]">{title}</p>
+<div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+  {/* BLOC ARTICLE PRÉCÉDENT (Plus ancien) */}
+  {
+    prevPost ? (
       <a
-        class="rounded-md px-1 py-0.5 text-sm transition-all hover:bg-[var(--primary-color-lighten)]"
-        id={sourceLink ? "source-link" : "post-url"}
-        href={sourceLink ?? ""}>{sourceLink ?? ""}</a
+        href={`/posts/${prevPost.slug}/`}
+        class="group relative flex h-full flex-col justify-center rounded-lg border border-gray-200 bg-gray-50 p-4 transition-all hover:border-[var(--primary-color)] hover:bg-[var(--primary-color-lighten)] dark:border-gray-700 dark:bg-[var(--card-color)] dark:hover:border-[var(--primary-color)]"
       >
-    </div>
-    <div class="ml-1 flex flex-row space-x-4 lg:space-x-8">
-      <div class="flex flex-col">
-        <span class="select-none text-sm text-[var(--text-color-lighten)]"
-          >{i18n(I18nKeys.copy_right_author)}</span
-        >
-        <p
-          class="!my-0 line-clamp-1 text-sm text-[var(--text-color)] lg:text-base"
-        >
-          {author ?? YukinaConfig.username}
+        <div class="mb-1 flex items-center gap-2 text-sm text-[var(--text-color-lighten)]">
+          <Icon name="mdi:arrow-left" class="transition-transform group-hover:-translate-x-1" />
+          <span>Article Précédent</span>
+        </div>
+        <p class="font-bold text-[var(--text-color)] line-clamp-2">
+          {prevPost.data.title}
         </p>
-      </div>
-      <div class="flex flex-col">
-        <span class="select-none text-sm text-[var(--text-color-lighten)]"
-          >{i18n(I18nKeys.copy_right_publish_date)}</span
-        >
-        <p
-          class="!my-0 line-clamp-1 text-sm text-[var(--text-color)] lg:text-base"
-        >
-          {formatDate(published, YukinaConfig.locale)}
-        </p>
-      </div>
-      <div class="flex flex-col">
-        <span class="select-none text-sm text-[var(--text-color-lighten)]"
-          >{i18n(I18nKeys.copy_right_license)}</span
-        >
-        <!-- with special license -->
-        {
-          license && license.url && (
-            <a
-              class="line-clamp-1 text-sm text-[var(--text-color)] lg:text-base"
-              href={license.url}
-              target="_blank"
-            >
-              {license.name}
-            </a>
-          )
-        }
-        {
-          license && !license.url && (
-            <p class="!my-0 line-clamp-1 text-sm text-[var(--text-color)] lg:text-base">
-              {license.name}
-            </p>
-          )
-        }
-        <!-- without special license -->
-        {
-          !license && (
-            <a
-              class="line-clamp-1 text-sm text-[var(--text-color)] lg:text-base"
-              href={YukinaConfig.license.url}
-              target="_blank"
-            >
-              {YukinaConfig.license.name}
-            </a>
-          )
-        }
-      </div>
-    </div>
-  </div>
-  <div
-    class="relative right-0 top-1/2 z-0 flex h-32 -translate-y-1/2 overflow-hidden lg:h-36"
-  >
-    <Icon
-      name="ooui:logo-cc"
-      size={230}
-      class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-300 dark:text-[var(--card-color)]"
-    />
-  </div>
-</div>
-
-<style>
-  .fonts {
-    font-family: var(--primary-font);
+      </a>
+    ) : (
+      /* Bloc vide pour garder l'alignement si pas de précédent */
+      <div class="hidden md:block" />
+    )
   }
-</style>
+
+  {/* BLOC ARTICLE SUIVANT (Plus récent) */}
+  {
+    nextPost ? (
+      <a
+        href={`/posts/${nextPost.slug}/`}
+        class="group relative flex h-full flex-col justify-center items-end rounded-lg border border-gray-200 bg-gray-50 p-4 text-right transition-all hover:border-[var(--primary-color)] hover:bg-[var(--primary-color-lighten)] dark:border-gray-700 dark:bg-[var(--card-color)] dark:hover:border-[var(--primary-color)]"
+      >
+        <div class="mb-1 flex items-center gap-2 text-sm text-[var(--text-color-lighten)]">
+          <span>Article Suivant</span>
+          <Icon name="mdi:arrow-right" class="transition-transform group-hover:translate-x-1" />
+        </div>
+        <p class="font-bold text-[var(--text-color)] line-clamp-2">
+          {nextPost.data.title}
+        </p>
+      </a>
+    ) : (
+      <div />
+    )
+  }
+</div>

@@ -1,0 +1,210 @@
+---
+import Main from "../../layouts/MainLayout.astro";
+
+/**
+ * ✅ TEMPLATE PAGE SERVICE (à dupliquer)
+ * Duplique ce fichier et renomme-le :
+ * - cours-informatique.astro
+ * - formations.astro
+ * - assistance-numerique.astro
+ * - coaching-digital.astro
+ */
+
+const title = "TITRE ICI (ex: Cours d'informatique à Vesoul / Pusey)";
+const subTitle = "Sous-titre ici (court et clair)";
+const bannerImage = undefined;
+
+// SEO (optionnel, mais pratique)
+const seoTitle = title;
+const seoDescription =
+  "Description courte (1 phrase) : service informatique à domicile autour de Vesoul / Pusey (70).";
+---
+
+<Main
+  title={title}
+  subTitle={subTitle}
+  bannerImage={bannerImage}
+  bannerHeight="24vh"
+  seoTitle={seoTitle}
+  seoDescription={seoDescription}
+>
+  <div class="article-wrapper">
+    <div class="article">
+
+      <h1 class="page-title">
+        <span class="page-title-gradient">{title}</span>
+      </h1>
+
+      <p class="page-intro">
+        Texte d’intro (2–4 lignes). Explique à qui ça s’adresse et ce que tu fais concrètement.
+      </p>
+
+      <!-- ======= CONTENU LIBRE ======= -->
+      <section class="block">
+        <h2 class="h2">Ce que je peux faire pour vous</h2>
+        <ul class="list">
+          <li class="li">Point 1 (simple, concret)</li>
+          <li class="li">Point 2</li>
+          <li class="li">Point 3</li>
+        </ul>
+      </section>
+
+      <section class="block">
+        <h2 class="h2">Comment ça se passe</h2>
+        <p class="p">
+          Décris ton déroulé : diagnostic, explication, action, conseils, sauvegardes, etc.
+        </p>
+      </section>
+
+      <section class="block">
+        <h2 class="h2">Zone d’intervention</h2>
+        <p class="p">
+          Autour de Vesoul / Pusey (70). Précise si tu veux : distance, frais de déplacement, etc.
+        </p>
+      </section>
+
+      <!-- ======= CTA (comme Services) ======= -->
+      <div class="cta">
+        <p class="cta-text">
+          Besoin d’aide ? Décrivez votre situation en 2 lignes, je vous dis rapidement ce qui est possible.
+        </p>
+        <div class="cta-actions">
+          <a class="cta-btn" href="/contact/">Me contacter</a>
+          <a class="cta-link" href="/tarifs">Consulter les tarifs</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</Main>
+
+{/* Styles globaux “structure” uniquement (comme ta page Services). */}
+<style is:global>
+  .main-container > .flex.flex-row.items-start > .space-y-8 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .article-wrapper {
+    @apply mx-3 rounded-2xl bg-[var(--card-color)] px-5 py-6 lg:mx-0 lg:px-10 lg:py-9;
+  }
+
+  .article {
+    @apply flex flex-col gap-6;
+    font-size: var(--primary-font);
+  }
+</style>
+
+{/* Styles de page (scopés) : minimal, réutilisable partout */}
+<style>
+  .page-title {
+    margin: 0 0 0.5rem 0;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    font-size: 1.75rem;
+  }
+  @media (min-width: 768px) { .page-title { font-size: 2.1rem; } }
+  @media (min-width: 1024px) { .page-title { font-size: 2.4rem; } }
+
+  .page-title-gradient {
+    background: linear-gradient(90deg, #60a5fa, #65a30d);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .page-intro {
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #374151;
+    margin: 0;
+  }
+  @media (min-width: 1024px) { .page-intro { font-size: 1.25rem; } }
+  :global(.dark) .page-intro { color: #9ca3af; }
+
+  .block {
+    border-radius: 1rem;
+    padding: 1.25rem;
+    border: 1px solid rgba(127,127,127,.18);
+    box-shadow: 0 1px 0 rgba(0,0,0,.03);
+  }
+  :global(.dark) .block { border-color: rgba(255,255,255,.10); }
+
+  .h2 {
+    margin: 0 0 0.6rem 0;
+    font-size: 1.25rem;
+    font-weight: 900;
+    color: #111827;
+    letter-spacing: -0.01em;
+  }
+  :global(.dark) .h2 { color: #fff; }
+
+  .p {
+    margin: 0;
+    line-height: 1.7;
+    font-size: 1.125rem;
+    color: #374151;
+  }
+  @media (min-width: 1024px) { .p { font-size: 1.25rem; } }
+  :global(.dark) .p { color: #9ca3af; }
+
+  .list {
+    margin: 0.25rem 0 0;
+    padding-left: 1.25rem;
+    list-style: disc;
+  }
+  .li {
+    margin: 0.35rem 0;
+    line-height: 1.7;
+    font-size: 1.125rem;
+    color: #374151;
+  }
+  @media (min-width: 1024px) { .li { font-size: 1.25rem; } }
+  :global(.dark) .li { color: #9ca3af; }
+  .li::marker { color: var(--primary-color, #3b82f6); }
+
+  .cta {
+    margin-top: 0.5rem;
+    padding: 1.25rem;
+    border-radius: 1rem;
+    background: rgba(59,130,246,.10);
+  }
+  :global(.dark) .cta { background: rgba(30,58,138,.25); }
+
+  .cta-text {
+    margin: 0;
+    font-size: 1.125rem;
+    color: #111827;
+  }
+  @media (min-width: 1024px) { .cta-text { font-size: 1.25rem; } }
+  :global(.dark) .cta-text { color: #e5e7eb; }
+
+  .cta-actions {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.9rem;
+    padding: 0.6rem 1rem;
+    font-weight: 900;
+    background: var(--primary-color, #3b82f6);
+    color: #fff;
+    text-decoration: none;
+  }
+  .cta-btn:hover { opacity: .92; }
+
+  .cta-link {
+    font-weight: 800;
+    color: #2563eb;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  :global(.dark) .cta-link { color: #60a5fa; }
+</style>

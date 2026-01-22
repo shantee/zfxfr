@@ -1,0 +1,45 @@
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # Images et Favicons : 1 an
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/gif "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+
+  # Polices d'écriture : 1 an
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+
+  # CSS et JS : 1 an (si tu utilises le cache busting d'Astro, sinon 1 mois)
+  # Astro génère des fichiers du type "index.A3f4.css", donc on peut cacher longtemps sans risque
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/javascript "access plus 1 year"
+</IfModule>
+
+# Compression GZIP (souvent activé par défaut, mais ça assure le coup)
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript application/javascript application/json image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+    # 1. HSTS : Force le HTTPS pendant 1 an (Ne le mets que si tu as un certificat SSL valide !)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+    # 2. X-Frame-Options : Empêche d'autres sites d'afficher ton site dans une iframe (anti-clickjacking)
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # 3. X-Content-Type-Options : Empêche le navigateur de deviner le type de fichier (sécurité MIME)
+    Header always set X-Content-Type-Options "nosniff"
+
+    # 4. Referrer-Policy : Contrôle quelles infos sont envoyées quand on clique sur un lien sortant
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # 5. Permissions-Policy : Bloque l'accès à la caméra/micro/geo sauf si nécessaire (optionnel mais bien vu)
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(self)"
+</IfModule>

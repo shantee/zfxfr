@@ -14,6 +14,14 @@ interface Props {
   };
   author?: string;
   sourceLink?: string;
+  prevPost?: {
+    data: { title: string };
+    slug: string;
+  } | null;
+  nextPost?: {
+    data: { title: string };
+    slug: string;
+  } | null;
 }
 
 const {
@@ -24,6 +32,8 @@ const {
   license,
   author,
   sourceLink,
+  prevPost,
+  nextPost,
 } = Astro.props;
 ---
 
@@ -32,19 +42,13 @@ const {
   <div class="article-wrapper">
     <div class="article">
       <Markdown>
-      <h1>{title}</h1>
-      
+        <h1>{title}</h1>
+
         <slot />
       </Markdown>
       {
         published && title && (
-          <CopyRight
-            title={title}
-            published={published}
-            license={license}
-            author={author}
-            sourceLink={sourceLink}
-          />
+          <CopyRight prevPost={prevPost} nextPost={nextPost} />
         )
       }
     </div>

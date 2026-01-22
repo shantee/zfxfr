@@ -18,17 +18,22 @@ const YukinaConfig: Configuration = {
       href: "/",
     },
     {
-      // NOUVEAU : menu Services + sous-menu Tarifs
+      // Services + sous-menus
       nameKey: I18nKeys.nav_bar_services,
       href: "/services",
-      children: [{ nameKey: I18nKeys.nav_bar_tarifs, href: "/tarifs" }],
+      children: [
+        { nameKey: I18nKeys.nav_bar_cours_informatique, href: "/services/cours-informatique" },
+        { nameKey: I18nKeys.nav_bar_formations, href: "/services/formations" },
+        { nameKey: I18nKeys.nav_bar_assistance_numerique, href: "/services/assistance-numerique" },
+        { nameKey: I18nKeys.nav_bar_coaching_digital, href: "/services/coaching-digital" },
+        { nameKey: I18nKeys.nav_bar_tarifs, href: "/tarifs" },
+      ],
     },
     {
       nameKey: I18nKeys.nav_bar_contact,
       href: "/contact",
     },
 
-    // ✅ NOUVEAU : Présentation
     {
       nameKey: I18nKeys.nav_bar_presentation,
       href: "/presentation",
@@ -38,8 +43,7 @@ const YukinaConfig: Configuration = {
       nameKey: I18nKeys.nav_bar_blog,
       href: "/blog",
       children: [
-        { nameKey: I18nKeys.nav_bar_archive, href: "/archive" }, // adapte l'URL si besoin
-        // { nameKey: I18nKeys.nav_bar_tags, href: "/tags" },     // éventuels autres sous-liens
+        { nameKey: I18nKeys.nav_bar_archive, href: "/archive" },
       ],
     },
   ],
@@ -48,16 +52,11 @@ const YukinaConfig: Configuration = {
   sign: "I make stuff.",
   avatarUrl: "/images/avatar1.png",
   socialLinks: [
-    {
-      icon: "line-md:github-loop",
-      link: "https://github.com/shantee",
-    },
-    {
-      icon: "line-md:youtube",
-      link: "https://www.youtube.com/@limace",
-    },
+    { icon: "line-md:facebook", link: "https://www.facebook.com/zfx.informatique"},
+    { icon: "line-md:github-loop", link: "https://github.com/shantee" },
+    { icon: "line-md:youtube", link: "https://www.youtube.com/@limace" },
   ],
-  maxSidebarCategoryChip: 6, // It is recommended to set it to a common multiple of 2 and 3
+  maxSidebarCategoryChip: 6,
   maxSidebarTagChip: 12,
   maxFooterCategoryChip: 6,
   maxFooterTagChip: 24,
@@ -78,7 +77,6 @@ const YukinaConfig: Configuration = {
     url: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
   },
 
-  // WIP functions
   bannerStyle: "LOOP", // 'loop' | 'static' | 'hidden'
 };
 

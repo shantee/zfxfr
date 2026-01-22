@@ -20,6 +20,8 @@ const navCount = YukinaConfig.navigators.reduce(
         id="menu-switcher"
         type="button"
         class="h-[40px] w-[44px] content-center"
+        aria-label="menu déroulant"
+       
       >
         <Icon
           id="menu-icon-closed"
@@ -78,7 +80,7 @@ const navCount = YukinaConfig.navigators.reduce(
 
     <div class="toolbar">
       <div class="theme">
-        <button type="button" id="theme-switcher">
+        <button type="button" id="theme-switcher" aria-label="changer le thème">
           <Icon
             id="theme-icon-light"
             name="line-md:moon-alt-to-sunny-outline-loop-transition"

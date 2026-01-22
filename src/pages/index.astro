@@ -18,10 +18,10 @@ const readMeta = (d) => {
   <div class="article-wrapper">
 <h1 class="mb-4 text-2xl font-extrabold text-gray-900 dark:text-white md:text-3xl lg:text-4xl">
 
-  <span class="text-transparent bg-clip-text bg-gradient-to-r to-lime-600 from-blue-400">
+  <span class="text-transparent bg-clip-text bg-gradient-to-r to-blue-600 from-purple-600">
     Dépannage / assistance informatique à domicile
   </span>
-<span class="text-blue-500 dark:text-blue-300">autour de Vesoul.</span>
+<span class="text-green-600 dark:text-blue-300">autour de Vesoul.</span>
 </h1>
 
 <p class="text-lg font-normal text-gray-700 lg:text-xl dark:text-gray-400">
@@ -75,8 +75,36 @@ const readMeta = (d) => {
   </a>
   !
 </p>
-<h2 class="mt-10 mb-3 text-2xl font-extrabold tracking-tight text-blue-400 dark:text-gray-300 md:text-3xl">
-  Basé à <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-lime-600">Pusey (70000)</span>
+
+<h2 class="mt-10 mb-3 text-2xl font-extrabold tracking-tight text-blue-500 dark:text-gray-300 md:text-3xl">
+   <span class="text-transparent bg-clip-text bg-gradient-to-r to-blue-600 from-purple-600">
+  Services (à domicile ou chez moi) </span><span class="text-green-600 dark:text-blue-300"></span>
+</h2>
+
+<p class="text-lg font-normal text-gray-700 dark:text-gray-400 lg:text-xl">
+  Je peux vous accueillir <span class="inline-block rounded-md bg-blue-50 px-2 py-0.5 font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">sur rendez-vous</span>.
+  Sinon, je me déplace à domicile dans un rayon d’environ <span class="font-semibold">15 km</span> autour de Vesoul / Pusey.
+</p>
+<p class="text-lg font-normal text-gray-700 dark:text-gray-400 lg:text-xl">
+  Je peux vous accueillir <span class="inline-block rounded-md bg-blue-50 px-2 py-0.5 font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">sur rendez-vous</span>.
+  Sinon, je me déplace à domicile dans un rayon d’environ <span class="font-semibold">15 km</span> autour de Vesoul / Pusey.
+</p>
+<p class="text-lg font-normal text-gray-700 dark:text-gray-400 lg:text-xl">
+  Je peux vous accueillir <span class="inline-block rounded-md bg-blue-50 px-2 py-0.5 font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">sur rendez-vous</span>.
+  Sinon, je me déplace à domicile dans un rayon d’environ <span class="font-semibold">15 km</span> autour de Vesoul / Pusey.
+</p>
+<p class="text-lg font-normal text-gray-700 dark:text-gray-400 lg:text-xl">
+  Je peux vous accueillir <span class="inline-block rounded-md bg-blue-50 px-2 py-0.5 font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">sur rendez-vous</span>.
+  Sinon, je me déplace à domicile dans un rayon d’environ <span class="font-semibold">15 km</span> autour de Vesoul / Pusey.
+</p>
+<p class="text-lg font-normal text-gray-700 dark:text-gray-400 lg:text-xl">
+  Je peux vous accueillir <span class="inline-block rounded-md bg-blue-50 px-2 py-0.5 font-semibold text-blue-700 dark:bg-blue-950 dark:text-blue-300">sur rendez-vous</span>.
+  Sinon, je me déplace à domicile dans un rayon d’environ <span class="font-semibold">15 km</span> autour de Vesoul / Pusey.
+</p>
+
+<h2 class="mt-10 mb-3 text-2xl font-extrabold tracking-tight text-blue-500 dark:text-gray-300 md:text-3xl">
+   <span class="text-transparent bg-clip-text bg-gradient-to-r to-blue-600 from-purple-600">
+  Basé à </span><span class="text-green-600 dark:text-blue-300">Pusey (70000)</span>
 </h2>
 
 <p class="text-lg font-normal text-gray-700 dark:text-gray-400 lg:text-xl">
@@ -84,8 +112,10 @@ const readMeta = (d) => {
   Sinon, je me déplace à domicile dans un rayon d’environ <span class="font-semibold">15 km</span> autour de Vesoul / Pusey.
 </p>
 <br><br>
+<div id="mapid" class="map-placeholder">
 <Map lat={47.65296} lng={6.12814} zoom={12} minZoom={11} radiusKm={10}
      popup="Autour de Vesoul (10 km)" clickToWheelZoom />
+</div>     
 <br><br>
 
 
@@ -125,4 +155,10 @@ const readMeta = (d) => {
     @apply flex flex-col;
     font-size: var(--primary-font);
   }
+  .map-placeholder {
+    height: 400px; /* La hauteur fixe est cruciale pour éviter le décalage (CLS) */
+    width: 100%;
+    background-image: url('/images/carte-pusey.webp'); 
+    background-position: center;
+}
 </style>

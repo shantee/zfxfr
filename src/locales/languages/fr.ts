@@ -13,6 +13,12 @@ export const fr: Translation = {
   [key.nav_bar_services]: "Services",
   [key.nav_bar_tarifs]: "Tarifs",
 
+  // ✅ NOUVEAU : sous-menus Services
+  [key.nav_bar_cours_informatique]: "Cours d'informatique",
+  [key.nav_bar_formations]: "Formations",
+  [key.nav_bar_assistance_numerique]: "Assistance numérique",
+  [key.nav_bar_coaching_digital]: "Coaching Digital",
+
   [key.nav_bar_presentation]: "Présentation",
 
   [key.nav_bar_about]: "À propos",

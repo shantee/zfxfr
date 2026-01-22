@@ -1,21 +1,23 @@
 ---
-title: "Saumon  snacké + gratins de poireaux sur purée"
-slug: "saumon-snacke-gratin-poireaux"
-image: /images/cuisine/saumon-gratin-poireau.jpg
-published: 2025-10-08
-description: "Saumon mi-cuit, sauce soja et sésame. À côté, ramequins de gratin de poireaux posés sur une purée pommes de terre–carotte–cébette."
-tags: ["cuisine", "saumon", "poireau"]
-category: Cuisine
+title: "Récupération de données sur OPPO FIND N bloqué"
+slug: "recuparation-donnees-smartphone"
+image: /images/recuperation-donnes-smartphone.jpg
+published: 2026-01-02
+description: "Récupérer des données sur un smartphone avec un écran cassé (qui ne répond plus) Oppo Find N"
+tags: ["sauvegarde", "android", "téléphone"]
+category: smartphone
 licenseName: "Unlicensed"
 author: shantee
 sourceLink: "https:/zfx.fr"
 draft: false
 ---
 
-## L’idée
-Assiette simple et efficace : pavé de saumon **snacké** (bien doré dehors, encore cru au cœur), laqué de **sauce soja** et **graines de sésame**. En accompagnement, **ramequins** de **gratin de poireaux** posés sur une **purée** pommes de terre–carotte–cébette.
+## Oppo Find N : Ecran tactile bloqué 
+Mes beaux parents sont chinois. en 2023 ils sont venus nous rendre visite en Franche Comté et ilsq nous ont ramené de chine un Oppo Find N chacun. 1 noir pour moi et un 1 blanc pour ma femme.
+Hélas 2 ans plus tard, l'écran n'a pas survécu à mon utilisation intensive. Bizaremment celui de ma femme semble plus costaud car elle l'utilise toujours et il fonctionne parfaitement.
+Bref des pixel morts sont apparus sur l'écran puis quelques semaines plus tard l'écran à fini par lacher complétement. Les deux écrans sont devenu completement inutilisables. C'est encore un problème qui n'a pas été résolu avec les écrans pliables. A force de les manipuler il finisssent par lacher. Soit parce qu'une nappe à l'intérieur du téléphone se détache soit parce que d'autres connections lachent.
 
-![Saumon snacké soja–sésame, gratins de poireaux]( /images/cuisine/saumon-gratin-poireau.jpg)
+![Saumon snacké soja–sésame, gratins de poireaux]( /images/oppo-find-n-reparation.jpg)
 
 ## Comment j’ai fait
 - **Purée** : pommes de terre + carottes cuites à l’eau salée, écrasées avec un peu de beurre, lait, sel, poivre. Cébette ciselée ajoutée en fin.
