@@ -1,0 +1,84 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import { getCollection } from "astro:content";
+import { IdToSlug } from "../utils/hash";
+
+const posts = await getCollection("posts");
+const sortedPosts = posts
+  .sort(
+    (a, b) =>
+      new Date(b.data.published).valueOf() -
+      new Date(a.data.published).valueOf(),
+  )
+  .slice(0, 3);
+---
+
+<MainLayout title="Page introuvable - 404" bannerHeight="30vh">
+  <div class="flex flex-col items-center justify-center py-12 text-center">
+    <div class="space-y-4">
+      <h1 class="text-6xl font-extrabold text-[var(--primary-color)]">404</h1>
+      <h2 class="text-3xl font-bold text-[var(--text-color)]">
+        Oups ! Vous êtes perdu dans l'espace 🪐
+      </h2>
+      <p class="mx-auto max-w-md text-lg text-[var(--text-color-lighten)]">
+        La page que vous cherchez n'existe pas, a été déplacée, ou a été aspirée
+        par un trou noir.
+      </p>
+
+      <div class="pt-6">
+        <a
+          href="/"
+          class="inline-flex items-center justify-center rounded-lg bg-[var(--primary-color)] px-6 py-3 text-base font-medium text-white transition-all hover:-translate-y-0.5 hover:bg-green-600 hover:shadow-lg"
+        >
+          Retourner à la base
+        </a>
+      </div>
+    </div>
+
+    <div class="mt-16 w-full max-w-4xl px-4 text-left">
+      <h3
+        class="mb-6 border-b border-gray-200 pb-2 text-xl font-bold text-[var(--text-color)] dark:border-gray-700"
+      >
+        Ce que les autres visitent souvent :
+      </h3>
+
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+        {
+          sortedPosts.map((post) => (
+            <a
+              href={`/posts/${IdToSlug(post.id)}/`}
+              class="group flex flex-col rounded-xl border border-gray-200 bg-[var(--card-color)] p-5 shadow-sm transition-all hover:border-[var(--primary-color)] hover:shadow-md dark:border-gray-700"
+            >
+              <h4 class="mb-2 line-clamp-2 font-bold text-[var(--text-color)] group-hover:text-[var(--primary-color)]">
+                {post.data.title}
+              </h4>
+              <p class="mb-4 line-clamp-3 flex-grow text-sm text-[var(--text-color-lighten)]">
+                {post.data.description}
+              </p>
+              <span class="text-xs font-semibold text-[var(--primary-color)] group-hover:underline">
+                Lire l'article →
+              </span>
+            </a>
+          ))
+        }
+      </div>
+
+      <div
+        class="mt-10 flex flex-wrap justify-center gap-8 text-sm font-medium text-[var(--text-color-lighten)]"
+      >
+        <a
+          href="/services"
+          class="flex items-center gap-2 transition-colors hover:text-[var(--primary-color)]"
+        >
+          <span>🛠️</span> Mes services
+        </a>
+        <a
+          href="/contact"
+          class="flex items-center gap-2 transition-colors hover:text-[var(--primary-color)]"
+        >
+          <span>📧</span> Me contacter
+        </a>
+      </div>
+    </div>
+  </div>
+</MainLayout>

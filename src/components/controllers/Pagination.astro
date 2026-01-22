@@ -19,32 +19,46 @@ let pages: (string | number)[] = [];
 if (props.lastPage <= maxVisiblePages) {
   pages = Array.from({ length: props.lastPage }, (_, i) => i + 1);
 } else {
-  const startPage = Math.max(1, props.current - Math.floor(maxVisiblePages / 2));
+  const startPage = Math.max(
+    1,
+    props.current - Math.floor(maxVisiblePages / 2),
+  );
   const endPage = Math.min(props.lastPage, startPage + maxVisiblePages - 1);
 
   if (startPage > 1) pages.push(1);
   if (startPage > 2) pages.push("...");
 
-  pages.push(...Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i));
+  pages.push(
+    ...Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i),
+  );
 
   if (endPage < props.lastPage - 1) pages.push("...");
   if (endPage < props.lastPage) pages.push(props.lastPage);
 }
 
 // ----- NEW: URLs basées sur basePath -----
-const base = (props.basePath ?? "").replace(/\/+$/, "");  // "/blog/" -> "/blog"
+// ----- NEW: URLs basées sur basePath -----
+const base = (props.basePath ?? "").replace(/\/+$/, ""); // "/blog/" -> "/blog"
 const hasBase = !!props.basePath;
 
 const hrefOf = (n: number) => {
-  if (!hasBase) return n === 1 ? "/" : `/${n}`; // comportement d’origine
-  return n === 1 ? (base || "/") : `${base}/${n}`;
+  if (!hasBase) return n === 1 ? "/" : `/${n}/`;
+  return n === 1 ? `${base}/` : `${base}/${n}/`;
 };
 
 const hasPrev = props.current > 1;
 const hasNext = props.current < props.lastPage;
 
-const prevHref = hasBase ? (hasPrev ? hrefOf(props.current - 1) : undefined) : props.prevURL ?? undefined;
-const nextHref = hasBase ? (hasNext ? hrefOf(props.current + 1) : undefined) : props.nextURL ?? undefined;
+const prevHref = hasBase
+  ? hasPrev
+    ? hrefOf(props.current - 1)
+    : undefined
+  : (props.prevURL ?? undefined);
+const nextHref = hasBase
+  ? hasNext
+    ? hrefOf(props.current + 1)
+    : undefined
+  : (props.nextURL ?? undefined);
 ---
 
 <div
@@ -92,17 +106,24 @@ const nextHref = hasBase ? (hasNext ? hrefOf(props.current + 1) : undefined) : p
     @apply flex h-10 w-10 flex-row items-center rounded-lg bg-[var(--card-color)] p-1 transition-all hover:brightness-90;
     @apply dark:bg-[var(--card-color-lighten)] dark:hover:brightness-125;
   }
-  .button span { @apply w-full text-center text-[var(--primary-color)]; }
+  .button span {
+    @apply w-full text-center text-[var(--primary-color)];
+  }
 
   .button-disabled {
     @apply flex h-10 w-10 cursor-not-allowed flex-row items-center rounded-lg bg-gray-200 p-1;
     @apply dark:bg-[var(--card-color-lighten)] dark:brightness-50;
   }
-  .button-disabled span { @apply w-full text-center text-[var(--text-color)] opacity-50; }
+  .button-disabled span {
+    @apply w-full text-center text-[var(--text-color)] opacity-50;
+  }
 
   .button-selected {
     @apply flex h-10 w-10 cursor-not-allowed flex-row items-center rounded-lg bg-[var(--primary-color)] p-1;
     pointer-events: none;
   }
-  .button-selected span { @apply w-full text-center text-[var(--card-color)]; @apply dark:text-white/75; }
+  .button-selected span {
+    @apply w-full text-center text-[var(--card-color)];
+    @apply dark:text-white/75;
+  }
 </style>

@@ -8,7 +8,7 @@ const YukinaConfig: Configuration = {
 
   description: "zFX : services, dépannage , coaching numérique",
 
-  site: "https://zfx.fr",
+  site: "https://zfx.fr/",
 
   locale: "fr-FR", // set for website language and date format
 
@@ -20,30 +20,30 @@ const YukinaConfig: Configuration = {
     {
       // Services + sous-menus
       nameKey: I18nKeys.nav_bar_services,
-      href: "/services",
+      href: "/services/",
       children: [
-        { nameKey: I18nKeys.nav_bar_cours_informatique, href: "/services/cours-informatique" },
-        { nameKey: I18nKeys.nav_bar_formations, href: "/services/formations" },
-        { nameKey: I18nKeys.nav_bar_assistance_numerique, href: "/services/assistance-numerique" },
-        { nameKey: I18nKeys.nav_bar_coaching_digital, href: "/services/coaching-digital" },
-        { nameKey: I18nKeys.nav_bar_tarifs, href: "/tarifs" },
+        { nameKey: I18nKeys.nav_bar_cours_informatique, href: "/services/cours-informatique/" },
+        { nameKey: I18nKeys.nav_bar_formations, href: "/services/formations/" },
+        { nameKey: I18nKeys.nav_bar_assistance_numerique, href: "/services/assistance-numerique/" },
+        { nameKey: I18nKeys.nav_bar_coaching_digital, href: "/services/coaching-digital/" },
+        { nameKey: I18nKeys.nav_bar_tarifs, href: "/tarifs/" },
       ],
     },
     {
       nameKey: I18nKeys.nav_bar_contact,
-      href: "/contact",
+      href: "/contact/",
     },
 
     {
       nameKey: I18nKeys.nav_bar_presentation,
-      href: "/presentation",
+      href: "/presentation/",
     },
 
     {
       nameKey: I18nKeys.nav_bar_blog,
-      href: "/blog",
+      href: "/blog/",
       children: [
-        { nameKey: I18nKeys.nav_bar_archive, href: "/archive" },
+        { nameKey: I18nKeys.nav_bar_archive, href: "/archive/" },
       ],
     },
   ],
@@ -52,7 +52,7 @@ const YukinaConfig: Configuration = {
   sign: "I make stuff.",
   avatarUrl: "/images/avatar1.png",
   socialLinks: [
-    { icon: "line-md:facebook", link: "https://www.facebook.com/zfx.informatique"},
+    { icon: "line-md:facebook", link: "https://www.facebook.com/zfx.informatique" },
     { icon: "line-md:github-loop", link: "https://github.com/shantee" },
     { icon: "line-md:youtube", link: "https://www.youtube.com/@limace" },
   ],

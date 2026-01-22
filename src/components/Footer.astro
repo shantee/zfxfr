@@ -12,74 +12,122 @@ const tagKeys = [...tags.keys()];
 const year = new Date().getFullYear();
 ---
 
-<footer class="relative text-white" style="--page-bg: var(--bg-color, #0b0b0b); --from:#0ea5e9; --to:#7c3aed;">
-  <div class="pied relative ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] w-[100vw] bg-gradient-to-b from-[var(--from)] to-[var(--to)] overflow-hidden">
-
+<footer
+  class="relative text-white"
+  style="--page-bg: var(--bg-color, #0b0b0b); --from:#0ea5e9; --to:#7c3aed;"
+>
+  <div
+    class="pied relative ml-[calc(50%-50vw)] mr-[calc(50%-50vw)] w-[100vw] overflow-hidden bg-gradient-to-b from-[var(--from)] to-[var(--to)]"
+  >
     <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-      
-     <div class="flex flex-wrap justify-center items-start gap-8 text-center
-            w-fit mx-auto
-            grid-cols-1
-            sm:grid-cols-[repeat(2,max-content)]
-            lg:grid-cols-[repeat(3,max-content)]">
-       
-       <div class="mx-auto w-full max-w-[42ch] sm:max-w-[24ch] text-center [text-wrap:balance]">
+      <div
+        class="mx-auto flex w-fit grid-cols-1 flex-wrap items-start justify-center gap-8 text-center sm:grid-cols-[repeat(2,max-content)] lg:grid-cols-[repeat(3,max-content)]"
+      >
+        <div
+          class="mx-auto w-full max-w-[42ch] text-center [text-wrap:balance] sm:max-w-[24ch]"
+        >
           <a
             href="/"
-            class="inline-flex items-center gap-2 font-semibold justify-center mx-auto w-fit"
+            class="mx-auto inline-flex w-fit items-center justify-center gap-2 font-semibold"
             title="réparation , dépannage informatique pusey / vesoul "
           >
-            <img src="/images/ZFX.png" alt="zFX : assistance informatique pc à domicile : smartphone à Vesoul / Pusey (70)" height="27px" width="100px"  />
+            <img
+              src="/images/ZFX.png"
+              alt="zFX : assistance informatique pc à domicile : smartphone à Vesoul / Pusey (70)"
+              height="27px"
+              width="100px"
+            />
           </a>
-          <p class="mt-3 text-sm/6 text-white/80 leading-relaxed hyphens-auto break-words">
-            Informaticien indépendant : réparation de matériel informatique, coaching et assistance numérique.
-            situé à <strong>Vesoul / Pusey (70000)</strong>
-            <br>
+          <p
+            class="mt-3 hyphens-auto break-words text-sm/6 leading-relaxed text-white/80"
+          >
+            Informaticien indépendant : réparation de matériel informatique,
+            coaching et assistance numérique. situé à <strong
+              >Vesoul / Pusey (70000)</strong
+            >
+            <br />
             SIRET : 52071833900028
           </p>
         </div>
 
         <div>
           <h3 class="text-sm font-semibold">Services</h3>
-          <ul class="mt-3 space-y-2 text-sm w-fit mx-auto">
-            <li><a  class="link" href=/services#reparation-pc-domicile>réparation de PC</a></li>
-            <li><a  class="link" href=/services#recuperation-de-donnees>récupération de fichiers</a></li>
-            <li><a  class="link" href=/services#sauvegarde-donnees>sauvegarde de documents</a></li>
-            <li><a  class="link" href=/services#cours-informatique>conseils / assistance numérique</a></li>
-            <li><a  class="link" href=/services#assistance-numerique>aide à domicile</a></li>
+          <ul class="mx-auto mt-3 w-fit space-y-2 text-sm">
+            <li>
+              <a class="link" href="/services/#reparation-pc-domicile"
+                >réparation de PC</a
+              >
+            </li>
+            <li>
+              <a class="link" href="/services/#recuperation-de-donnees"
+                >récupération de fichiers</a
+              >
+            </li>
+            <li>
+              <a class="link" href="/services/#sauvegarde-donnees"
+                >sauvegarde de documents</a
+              >
+            </li>
+            <li>
+              <a class="link" href="/services/assistance-numerique/"
+                >conseils / assistance numérique</a
+              >
+            </li>
+            <li>
+              <a class="link" href="/services/coaching-digital/"
+                >aide à domicile / coaching numérique</a
+              >
+            </li>
           </ul>
         </div>
 
         <div class="flex flex-col items-center">
           <h3 class="text-sm font-semibold">Liens</h3>
-          <ul class="mt-3 space-y-2 text-sm w-fit mx-auto mb-4">
+          <ul class="mx-auto mb-4 mt-3 w-fit space-y-2 text-sm">
             <li class="flex items-center justify-center gap-2">
-              <a class="link" href={new URL("sitemap-index.xml", YukinaConfig.site)}>SiteMap</a>
+              <a
+                class="link"
+                href={new URL("sitemap-index.xml", YukinaConfig.site)}
+                >SiteMap</a
+              >
               <span class="opacity-60">/</span>
               <a class="link" href="/rss.xml">RSS</a>
             </li>
-            {YukinaConfig.site && (
-              <li><a class="link" href="/contact" >Contact</a></li>
-            )}
+            {
+              YukinaConfig.site && (
+                <li>
+                  <a class="link" href="/contact/">
+                    Contact
+                  </a>
+                </li>
+              )
+            }
           </ul>
 
           <ul class="social">
-            <li data-tooltip="Facebook" style="--bg: #1877F2">
-              <a href="https://www.facebook.com/zfx.informatique" target="_blank" aria-label="page facebook : zfx informatique">
+            <li
+              data-tooltip="ma page ZFX Informatique sur facebook"
+              style="--bg: #1877F2"
+            >
+              <a
+                href="https://www.facebook.com/zfx.informatique"
+                target="_blank"
+                aria-label="page facebook : zfx informatique"
+              >
                 <Icon name="fa6-brands:facebook-f" />
               </a>
             </li>
           </ul>
-
         </div>
       </div>
-
     </div>
   </div>
 </footer>
 
 <style>
-  .link { @apply underline-offset-2 hover:underline; }
+  .link {
+    @apply underline-offset-2 hover:underline;
+  }
 
   /* --- STYLE DU BOUTON FACEBOOK (CodePen Adapté) --- */
   .social {
@@ -115,8 +163,10 @@ const year = new Date().getFullYear();
     visibility: hidden;
     pointer-events: none;
     white-space: nowrap;
-    transition: inset 0.4s cubic-bezier(0.47, 2, 0.41, 1.5),
-                visibility 0.3s ease-in-out, opacity 0.2s ease-in-out;
+    transition:
+      inset 0.4s cubic-bezier(0.47, 2, 0.41, 1.5),
+      visibility 0.3s ease-in-out,
+      opacity 0.2s ease-in-out;
   }
 
   /* Activation Tooltip */
@@ -173,61 +223,105 @@ const year = new Date().getFullYear();
   }
 
   /* --- STYLE AURORA DU FOOTER --- */
-  .pied{
+  .pied {
     position: relative;
-    border-top: 6px solid rgba(0,124,255,0.85);
+    border-top: 6px solid rgba(0, 124, 255, 0.85);
     overflow: visible;
   }
-  .pied::before{
-    left: 0; right: 0; width: auto;
-    --c1: rgba( 76,255,255,0.95);
-    --c2: rgba(  0,255,155,0.95);
-    --c3: rgba(180,120,255,0.95);
-    --c4: rgba(255, 80,120,0.95);
-    --c5: rgba(255,220,120,0.95);
+  .pied::before {
+    left: 0;
+    right: 0;
+    width: auto;
+    --c1: rgba(76, 255, 255, 0.95);
+    --c2: rgba(0, 255, 155, 0.95);
+    --c3: rgba(180, 120, 255, 0.95);
+    --c4: rgba(255, 80, 120, 0.95);
+    --c5: rgba(255, 220, 120, 0.95);
 
-    content:"";
-    position:absolute;
-    left:-6%; width:112%;
-    top:-5px; height:14px;
-    background: linear-gradient(90deg,transparent 0%,var(--c1) 10%,var(--c2) 25%,rgba(255, 110, 164, 0.95) 40%,rgba(255, 41, 242, 0.95) 55%,rgba(255, 202, 51, 0.95) 70%,var(--c1) 85%,#0342ff00 100%);
+    content: "";
+    position: absolute;
+    left: -6%;
+    width: 112%;
+    top: -5px;
+    height: 14px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--c1) 10%,
+      var(--c2) 25%,
+      rgba(255, 110, 164, 0.95) 40%,
+      rgba(255, 41, 242, 0.95) 55%,
+      rgba(255, 202, 51, 0.95) 70%,
+      var(--c1) 85%,
+      #0342ff00 100%
+    );
     background-size: 300% 100%;
     filter: blur(10px) saturate(1.2);
-    opacity: .95;
+    opacity: 0.95;
     border-radius: 10px;
     pointer-events: none;
-    animation: auroraSweep 6s linear infinite, auroraPulse 3.2s ease-in-out infinite;
+    animation:
+      auroraSweep 6s linear infinite,
+      auroraPulse 3.2s ease-in-out infinite;
     will-change: background-position, filter, opacity;
   }
-  .pied::after{
-    content:"";
-    position:absolute;
-    left:-8%; width:116%;
-    top:-14px; height:20px;
+  .pied::after {
+    content: "";
+    position: absolute;
+    left: -8%;
+    width: 116%;
+    top: -14px;
+    height: 20px;
     background:
-      radial-gradient(80% 60% at 30% 50%, rgba(0, 140, 255, 0.28), rgba(255, 200, 18, 0.918) 70%),
-      radial-gradient(80% 60% at 70% 50%, rgba(255,255,255,.18), rgba(255,255,255,0) 70%);
+      radial-gradient(
+        80% 60% at 30% 50%,
+        rgba(0, 140, 255, 0.28),
+        rgba(255, 200, 18, 0.918) 70%
+      ),
+      radial-gradient(
+        80% 60% at 70% 50%,
+        rgba(255, 255, 255, 0.18),
+        rgba(255, 255, 255, 0) 70%
+      );
     filter: blur(14px);
-    opacity: .7;
+    opacity: 0.7;
     mix-blend-mode: screen;
     pointer-events: none;
     animation: auroraParallax 9s ease-in-out infinite alternate;
     will-change: transform;
   }
 
-  @keyframes auroraSweep{
-    0%   { background-position:   0% 0; }
-    100% { background-position: 200% 0; }
+  @keyframes auroraSweep {
+    0% {
+      background-position: 0% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
-  @keyframes auroraPulse{
-    0%,100% { filter: blur(10px) saturate(1.2); opacity:.92; }
-    50%     { filter: blur(18px) saturate(1.35); opacity:1;  }
+  @keyframes auroraPulse {
+    0%,
+    100% {
+      filter: blur(10px) saturate(1.2);
+      opacity: 0.92;
+    }
+    50% {
+      filter: blur(18px) saturate(1.35);
+      opacity: 1;
+    }
   }
-  @keyframes auroraParallax{
-    0%   { transform: translateX(-4%); }
-    100% { transform: translateX( 4%); }
+  @keyframes auroraParallax {
+    0% {
+      transform: translateX(-4%);
+    }
+    100% {
+      transform: translateX(4%);
+    }
   }
-  @media (prefers-reduced-motion: reduce){
-    .pied::before, .pied::after { animation: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .pied::before,
+    .pied::after {
+      animation: none;
+    }
   }
 </style>

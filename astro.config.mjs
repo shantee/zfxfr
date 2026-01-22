@@ -22,26 +22,27 @@ export default defineConfig({
   site: YukinaConfig.site,
 
 
-build: {
+  build: {
     inlineStylesheets: 'always',
+    trailingSlash: 'always',
   },
-  
+
 
   integrations: [
     tailwind(),
     svelte(),
     icon(),
-   /* swup({
-      theme: false,
-      containers: ["main", "footer", ".banner-inner"],
-      smoothScrolling: true,
-      progress: true,
-      cache: false,
-      preload: true,
-      updateHead: true,
-      updateBodyClass: false,
-      globalInstance: true,
-    }),*/
+    /* swup({
+       theme: false,
+       containers: ["main", "footer", ".banner-inner"],
+       smoothScrolling: true,
+       progress: true,
+       cache: false,
+       preload: true,
+       updateHead: true,
+       updateBodyClass: false,
+       globalInstance: true,
+     }),*/
     sitemap(),
     pagefind(),
   ],

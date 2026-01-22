@@ -85,7 +85,7 @@ export async function GetArchives() {
     }
     archives.get(year)!.push({
       title: post.data.title,
-      id: `/posts/${IdToSlug(post.id)}`,
+      id: `/posts/${IdToSlug(post.id)}/`,
       date: date,
       tags: post.data.tags,
     });
@@ -121,13 +121,13 @@ export async function GetTags() {
       if (!tags.has(tagSlug)) {
         tags.set(tagSlug, {
           name: tag,
-          slug: `/tags/${tagSlug}`,
+          slug: `/tags/${tagSlug}/`,
           posts: [],
         });
       }
       tags.get(tagSlug)!.posts.push({
         title: post.data.title,
-        id: `/posts/${IdToSlug(post.id)}`,
+        id: `/posts/${IdToSlug(post.id)}/`,
         date: new Date(post.data.published),
         tags: post.data.tags,
       });
@@ -159,13 +159,13 @@ export async function GetCategories() {
     if (!categories.has(categorySlug)) {
       categories.set(categorySlug, {
         name: post.data.category,
-        slug: `/categories/${categorySlug}`,
+        slug: `/categories/${categorySlug}/`,
         posts: [],
       });
     }
     categories.get(categorySlug)!.posts.push({
       title: post.data.title,
-      id: `/posts/${IdToSlug(post.id)}`,
+      id: `/posts/${IdToSlug(post.id)}/`,
       date: new Date(post.data.published),
       tags: post.data.tags,
     });

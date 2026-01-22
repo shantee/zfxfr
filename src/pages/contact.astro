@@ -7,37 +7,48 @@ const phone = "06.51.15.57.58";
 <MainLayout
   bannerHeight="22vh"
   title="Contact"
-  seoTitle="Contact – Dépannage informatique à Vesoul / Pusey"
+  seoTitle="votre assistant expert en informatique à Vesoul / Pusey"
   seoDescription="Contactez-moi pour un rendez-vous, un devis ou une question (Vesoul / Pusey)."
 >
   <div class="article-wrapper">
     <div class="article" style="margin:auto;">
       <section id="contact">
-
         <h1 class="ctc-title">
           <span class="ctc-title-gradient">Contact</span>
           <span class="ctc-title-suffix"> (devis / rendez-vous).</span>
         </h1>
 
         <p class="ctc-lead">
-          Vous pouvez utiliser ce formulaire pour prendre <strong>rendez-vous</strong>, demander un <strong>devis</strong> ou pour toute autre
+          Vous pouvez utiliser ce formulaire pour prendre <strong
+            >rendez-vous</strong
+          >, demander un <strong>devis</strong> ou pour toute autre
           <strong> question</strong>. N’hésitez pas !
         </p>
 
         <p class="ctc-lead ctc-lead--phone">
           <span class="ctc-badge">Téléphone</span>
           {" "}
-          Vous pouvez aussi me joindre au <span class="ctc-strong">{phone}</span>.
+          Vous pouvez aussi me joindre au <span class="ctc-strong">{phone}</span
+          >.
         </p>
 
         <div class="ctc-tip">
           <p class="ctc-tip-text">
-            Astuce : indiquez si vous préférez une réponse <strong>par téléphone</strong> (et votre créneau idéal).
+            Astuce : indiquez si vous préférez une réponse <strong
+              >par téléphone</strong
+            > (et votre créneau idéal).
           </p>
         </div>
 
         {/* Statut dynamique (JS) + fallback ?sent=ok|fail|... */}
-        <div id="form-status" class="alert" role="status" aria-live="polite" hidden></div>
+        <div
+          id="form-status"
+          class="alert"
+          role="status"
+          aria-live="polite"
+          hidden
+        >
+        </div>
 
         <form
           id="contact-form"
@@ -68,9 +79,10 @@ const phone = "06.51.15.57.58";
               name="message"
               rows="7"
               required
-              placeholder="Votre message…&#10;Ex : PC lent depuis 1 semaine, Windows 11, et j’aimerais un rendez-vous.&#10;(N’hésitez pas à laisser votre n° si vous souhaitez être rappelé)"
-              class="ctc-textarea"
-            ></textarea>
+              placeholder="Votre message…
+Ex : PC lent depuis 1 semaine, Windows 11, et j’aimerais un rendez-vous.
+(N’hésitez pas à laisser votre n° si vous souhaitez être rappelé)"
+              class="ctc-textarea"></textarea>
           </div>
 
           {/* Upload fichier (optionnel) */}
@@ -107,7 +119,8 @@ const phone = "06.51.15.57.58";
             </div>
 
             <small class="ctc-hint">
-              Max ~10 Mo. Types autorisés : images, PDF, archives, texte, Office.
+              Max ~10 Mo. Types autorisés : images, PDF, archives, texte,
+              Office.
             </small>
           </div>
 
@@ -118,15 +131,16 @@ const phone = "06.51.15.57.58";
           </div>
 
           <div class="ctc-actions">
-            <button aria-label="Enoyer le message" type="submit" class="ctc-btn">Envoyer</button>
-           
+            <button aria-label="Enoyer le message" type="submit" class="ctc-btn"
+              >Envoyer</button
+            >
           </div>
         </form>
 
         <p class="ctc-note">
-          * Vos informations ne sont utilisées que pour répondre à votre message.
+          * Vos informations ne sont utilisées que pour répondre à votre
+          message.
         </p>
-
       </section>
     </div>
   </div>
@@ -149,7 +163,9 @@ const phone = "06.51.15.57.58";
   }
 </style>
 
-{/* Styles CONTACT uniquement (scopés => n’affectent pas le footer/header/menu) */}
+{
+  /* Styles CONTACT uniquement (scopés => n’affectent pas le footer/header/menu) */
+}
 <style>
   #contact {
     max-width: 760px;
@@ -162,8 +178,16 @@ const phone = "06.51.15.57.58";
     letter-spacing: -0.02em;
     font-size: 1.75rem;
   }
-  @media (min-width: 768px) { .ctc-title { font-size: 2.1rem; } }
-  @media (min-width: 1024px) { .ctc-title { font-size: 2.4rem; } }
+  @media (min-width: 768px) {
+    .ctc-title {
+      font-size: 2.1rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .ctc-title {
+      font-size: 2.4rem;
+    }
+  }
 
   .ctc-title-gradient {
     background: linear-gradient(90deg, #60a5fa, #65a30d);
@@ -184,41 +208,57 @@ const phone = "06.51.15.57.58";
     color: #374151;
     margin: 0;
   }
-  @media (min-width: 1024px) { .ctc-lead { font-size: 1.25rem; } }
-  :global(.dark) .ctc-lead { color: #9ca3af; }
+  @media (min-width: 1024px) {
+    .ctc-lead {
+      font-size: 1.25rem;
+    }
+  }
+  :global(.dark) .ctc-lead {
+    color: #9ca3af;
+  }
 
-  .ctc-lead--phone { margin-top: 1rem; }
+  .ctc-lead--phone {
+    margin-top: 1rem;
+  }
 
   .ctc-badge {
     display: inline-block;
     border-radius: 0.5rem;
     padding: 0.2rem 0.5rem;
     font-weight: 700;
-    background: rgba(59,130,246,.10);
+    background: rgba(59, 130, 246, 0.1);
     color: #1d4ed8;
   }
   :global(.dark) .ctc-badge {
-    background: rgba(30,58,138,.35);
+    background: rgba(30, 58, 138, 0.35);
     color: #93c5fd;
   }
-  .ctc-strong { font-weight: 800; }
+  .ctc-strong {
+    font-weight: 800;
+  }
 
   .ctc-tip {
     margin-top: 1.25rem;
     padding: 1.1rem 1.2rem;
     border-radius: 1rem;
-    background: rgba(59,130,246,.10);
+    background: rgba(59, 130, 246, 0.1);
   }
   :global(.dark) .ctc-tip {
-    background: rgba(30,58,138,.25);
+    background: rgba(30, 58, 138, 0.25);
   }
   .ctc-tip-text {
     margin: 0;
     font-size: 1.125rem;
     color: #111827;
   }
-  @media (min-width: 1024px) { .ctc-tip-text { font-size: 1.25rem; } }
-  :global(.dark) .ctc-tip-text { color: #e5e7eb; }
+  @media (min-width: 1024px) {
+    .ctc-tip-text {
+      font-size: 1.25rem;
+    }
+  }
+  :global(.dark) .ctc-tip-text {
+    color: #e5e7eb;
+  }
 
   /* alert */
   .alert {
@@ -227,10 +267,14 @@ const phone = "06.51.15.57.58";
     padding: 0.9rem 1rem;
     background: color-mix(in oklab, var(--card-color) 92%, transparent);
     color: var(--text-color);
-    border: 1px dashed rgba(127,127,127,.35);
+    border: 1px dashed rgba(127, 127, 127, 0.35);
   }
-  .alert.success { border-color: #3cb37199; }
-  .alert.error   { border-color: #ff6b6b99; }
+  .alert.success {
+    border-color: #3cb37199;
+  }
+  .alert.error {
+    border-color: #ff6b6b99;
+  }
 
   /* form */
   .ctc-form {
@@ -246,22 +290,30 @@ const phone = "06.51.15.57.58";
     font-weight: 700;
     color: #111827;
   }
-  :global(.dark) .ctc-label { color: #ffffff; }
+  :global(.dark) .ctc-label {
+    color: #ffffff;
+  }
 
-  .ctc-input, .ctc-textarea {
+  .ctc-input,
+  .ctc-textarea {
     width: 100%;
     padding: 12px 14px;
     border-radius: 16px;
-    border: 1px solid rgba(127,127,127,.28);
+    border: 1px solid rgba(127, 127, 127, 0.28);
     background: color-mix(in oklab, var(--card-color) 94%, transparent);
     color: var(--text-color);
     outline: none;
   }
-  .ctc-input::placeholder, .ctc-textarea::placeholder { color: var(--text-color-lighten); }
+  .ctc-input::placeholder,
+  .ctc-textarea::placeholder {
+    color: var(--text-color-lighten);
+  }
 
-  .ctc-input:focus, .ctc-textarea:focus {
+  .ctc-input:focus,
+  .ctc-textarea:focus {
     border-color: color-mix(in oklab, var(--primary-color), white 35%);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary-color), transparent 75%);
+    box-shadow: 0 0 0 3px
+      color-mix(in oklab, var(--primary-color), transparent 75%);
   }
 
   /* honeypot hidden */
@@ -279,49 +331,77 @@ const phone = "06.51.15.57.58";
     display: grid;
     place-items: center;
     gap: 0.25rem;
-    border: 1px dashed rgba(127,127,127,.45);
+    border: 1px dashed rgba(127, 127, 127, 0.45);
     border-radius: 18px;
     padding: 18px;
     background: color-mix(in oklab, var(--card-color) 92%, transparent);
     cursor: pointer;
-    transition: border-color .2s, background .2s, transform .05s ease;
+    transition:
+      border-color 0.2s,
+      background 0.2s,
+      transform 0.05s ease;
     user-select: none;
   }
   .ctc-dropzone:focus-visible {
     outline: 2px solid color-mix(in oklab, var(--primary-color), white 40%);
     outline-offset: 2px;
   }
-  .ctc-dropzone:hover { border-color: var(--primary-color); }
+  .ctc-dropzone:hover {
+    border-color: var(--primary-color);
+  }
   .ctc-dropzone.dragover {
     border-color: var(--primary-color);
-    background: color-mix(in oklab, var(--card-color) 85%, var(--primary-color) 15%);
+    background: color-mix(
+      in oklab,
+      var(--card-color) 85%,
+      var(--primary-color) 15%
+    );
   }
-  .ctc-dz-icon { font-size: 1.35rem; opacity: .9; }
-  .ctc-dz-text { text-align: center; color: var(--text-color); font-size: 1rem; line-height: 1.2; }
-  .ctc-dz-sub { color: var(--text-color-lighten); font-weight: 500; }
+  .ctc-dz-icon {
+    font-size: 1.35rem;
+    opacity: 0.9;
+  }
+  .ctc-dz-text {
+    text-align: center;
+    color: var(--text-color);
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  .ctc-dz-sub {
+    color: var(--text-color-lighten);
+    font-weight: 500;
+  }
 
-  .ctc-file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .ctc-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
 
   .ctc-file-name {
-    margin-top: .35rem;
-    font-size: .95rem;
+    margin-top: 0.35rem;
+    font-size: 0.95rem;
     padding: 8px 12px;
     border-radius: 14px;
     background: color-mix(in oklab, var(--card-color) 94%, transparent);
-    border: 1px solid rgba(127,127,127,.25);
+    border: 1px solid rgba(127, 127, 127, 0.25);
     color: var(--text-color);
   }
 
-  .ctc-hint { color: var(--text-color-lighten); font-size: .9rem; }
+  .ctc-hint {
+    color: var(--text-color-lighten);
+    font-size: 0.9rem;
+  }
 
   /* progress bar */
   .ctc-progress-wrap {
     position: relative;
     height: 12px;
-    background: rgba(127,127,127,.2);
+    background: rgba(127, 127, 127, 0.2);
     border-radius: 999px;
     overflow: hidden;
-    margin-top: .5rem;
+    margin-top: 0.5rem;
   }
   .ctc-progress-bar {
     height: 100%;
@@ -332,25 +412,25 @@ const phone = "06.51.15.57.58";
       color-mix(in oklab, var(--primary-color), white 20%)
     );
     border-radius: 999px;
-    transition: width .15s ease;
+    transition: width 0.15s ease;
   }
   .ctc-progress-pct {
     position: absolute;
     inset: 0;
     display: grid;
     place-items: center;
-    font-size: .78rem;
+    font-size: 0.78rem;
     color: white;
-    text-shadow: 0 1px 2px rgba(0,0,0,.35);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
   }
 
   /* actions */
-.ctc-actions{
-  display: flex;
-  flex-direction: column; /* empile */
-  align-items: center;    /* centre horizontalement */
-  gap: 0.6rem;
-}
+  .ctc-actions {
+    display: flex;
+    flex-direction: column; /* empile */
+    align-items: center; /* centre horizontalement */
+    gap: 0.6rem;
+  }
   .ctc-btn {
     display: inline-flex;
     align-items: center;
@@ -364,26 +444,28 @@ const phone = "06.51.15.57.58";
     cursor: pointer;
     text-decoration: none;
   }
-  .ctc-btn:hover { opacity: .92; }
+  .ctc-btn:hover {
+    opacity: 0.92;
+  }
 
   .ctc-a {
     font-weight: 700;
     color: #2563eb;
     text-decoration: underline;
     text-underline-offset: 4px;
-    text-decoration-color: rgba(147,197,253,.7);
+    text-decoration-color: rgba(147, 197, 253, 0.7);
   }
   .ctc-a:hover {
     color: #1d4ed8;
-    text-decoration-color: rgba(59,130,246,.9);
+    text-decoration-color: rgba(59, 130, 246, 0.9);
   }
   :global(.dark) .ctc-a {
     color: #60a5fa;
-    text-decoration-color: rgba(59,130,246,.55);
+    text-decoration-color: rgba(59, 130, 246, 0.55);
   }
   :global(.dark) .ctc-a:hover {
     color: #93c5fd;
-    text-decoration-color: rgba(147,197,253,.8);
+    text-decoration-color: rgba(147, 197, 253, 0.8);
   }
 
   .ctc-note {
@@ -396,104 +478,126 @@ const phone = "06.51.15.57.58";
 
 <script is:raw>
   (function () {
-    const form = document.getElementById('contact-form');
-    const statusEl = document.getElementById('form-status');
+    const form = document.getElementById("contact-form");
+    const statusEl = document.getElementById("form-status");
 
-    const drop = document.getElementById('dropzone');
-    const input = document.getElementById('file');
-    const nameEl = document.getElementById('fileName');
-    const pWrap = document.getElementById('progressWrap');
-    const pBar  = document.getElementById('progressBar');
-    const pPct  = document.getElementById('progressPct');
+    const drop = document.getElementById("dropzone");
+    const input = document.getElementById("file");
+    const nameEl = document.getElementById("fileName");
+    const pWrap = document.getElementById("progressWrap");
+    const pBar = document.getElementById("progressBar");
+    const pPct = document.getElementById("progressPct");
 
     const MESSAGES = {
-      ok:      { text: "✅ Message envoyé. Je vous réponds rapidement !", cls: "success" },
-      fail:    { text: "❌ Erreur d’envoi. Merci de réessayer.",         cls: "error"   },
-      invalid: { text: "⚠️ Champs manquants ou e-mail invalide.",        cls: "error"   },
-      bot:     { text: "🤖 Détection anti-spam.",                         cls: "error"   },
-      method:  { text: "⚠️ Méthode HTTP non autorisée.",                  cls: "error"   }
+      ok: {
+        text: "✅ Message envoyé. Je vous réponds rapidement !",
+        cls: "success",
+      },
+      fail: { text: "❌ Erreur d’envoi. Merci de réessayer.", cls: "error" },
+      invalid: {
+        text: "⚠️ Champs manquants ou e-mail invalide.",
+        cls: "error",
+      },
+      bot: { text: "🤖 Détection anti-spam.", cls: "error" },
+      method: { text: "⚠️ Méthode HTTP non autorisée.", cls: "error" },
     };
 
     function showStatus(kind) {
       const m = MESSAGES[kind] || MESSAGES.fail;
-      statusEl.className = 'alert ' + m.cls;
+      statusEl.className = "alert " + m.cls;
       statusEl.textContent = m.text;
       statusEl.hidden = false;
     }
     function clearStatus() {
       statusEl.hidden = true;
-      statusEl.textContent = '';
+      statusEl.textContent = "";
     }
     function stripSentParam() {
-      if (location.search.includes('sent=')) {
-        history.replaceState(null, '', location.pathname + location.hash);
+      if (location.search.includes("sent=")) {
+        history.replaceState(null, "", location.pathname + location.hash);
       }
     }
 
     // Affichage si on arrive avec ?sent=...
     const params = new URLSearchParams(location.search);
-    const sent = params.get('sent');
+    const sent = params.get("sent");
     if (sent) {
       showStatus(sent);
       stripSentParam();
     }
 
     // Drag & drop
-    drop.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('dragover'); });
-    drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
-    drop.addEventListener('drop', (e) => {
-      e.preventDefault(); drop.classList.remove('dragover');
+    drop.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      drop.classList.add("dragover");
+    });
+    drop.addEventListener("dragleave", () => drop.classList.remove("dragover"));
+    drop.addEventListener("drop", (e) => {
+      e.preventDefault();
+      drop.classList.remove("dragover");
       if (e.dataTransfer.files && e.dataTransfer.files[0]) {
         input.files = e.dataTransfer.files;
         setFileName(input.files[0]);
       }
     });
-    input.addEventListener('change', () => setFileName(input.files[0]));
+    input.addEventListener("change", () => setFileName(input.files[0]));
 
     function setFileName(file) {
-      if (!file) { nameEl.hidden = true; nameEl.textContent = ''; return; }
-      nameEl.textContent = `📎 ${file.name} — ${(file.size/1048576).toFixed(2)} Mo`;
+      if (!file) {
+        nameEl.hidden = true;
+        nameEl.textContent = "";
+        return;
+      }
+      nameEl.textContent = `📎 ${file.name} — ${(file.size / 1048576).toFixed(2)} Mo`;
       nameEl.hidden = false;
     }
 
     // Submit (XHR + progression). Si pas supporté → submit normal (fallback)
-    form.addEventListener('submit', (e) => {
-      if (!('XMLHttpRequest' in window) || !('upload' in new XMLHttpRequest())) return;
+    form.addEventListener("submit", (e) => {
+      if (!("XMLHttpRequest" in window) || !("upload" in new XMLHttpRequest()))
+        return;
 
       e.preventDefault();
       clearStatus();
 
       if (pWrap) {
         pWrap.hidden = false;
-        pBar.style.width = '0%';
-        if (pPct) pPct.textContent = '0%';
+        pBar.style.width = "0%";
+        if (pPct) pPct.textContent = "0%";
       }
 
       const data = new FormData(form);
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', form.action, true);
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+      xhr.open("POST", form.action, true);
+      xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 
       xhr.upload.onprogress = (ev) => {
         if (!ev.lengthComputable || !pBar) return;
         const pct = Math.round((ev.loaded / ev.total) * 100);
-        pBar.style.width = pct + '%';
-        if (pPct) pPct.textContent = pct + '%';
+        pBar.style.width = pct + "%";
+        if (pPct) pPct.textContent = pct + "%";
       };
 
-      xhr.onerror = () => showStatus('fail');
+      xhr.onerror = () => showStatus("fail");
       xhr.onload = () => {
-        let kind = (xhr.status === 200) ? 'ok' : 'fail';
+        let kind = xhr.status === 200 ? "ok" : "fail";
         try {
-          const res = JSON.parse(xhr.responseText || '{}');
+          const res = JSON.parse(xhr.responseText || "{}");
           if (res.status) kind = res.status;
         } catch {}
         showStatus(kind);
 
-        if (kind === 'ok') {
+        if (kind === "ok") {
           form.reset();
-          if (nameEl) { nameEl.hidden = true; nameEl.textContent = ''; }
-          if (pWrap) { setTimeout(() => { pWrap.hidden = true; }, 600); }
+          if (nameEl) {
+            nameEl.hidden = true;
+            nameEl.textContent = "";
+          }
+          if (pWrap) {
+            setTimeout(() => {
+              pWrap.hidden = true;
+            }, 600);
+          }
         }
       };
 

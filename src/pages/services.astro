@@ -1,16 +1,18 @@
 ---
 import Main from "../layouts/MainLayout.astro";
 
-const title = "Services informatiques & assitance numérique Vesoul - Pusey - 70";
+const title =
+  "Services informatiques & assitance numérique Vesoul - Pusey - 70";
 const subTitle = "Services informatiques à domicile Vesoul";
 const bannerImage = undefined;
 
 const services = [
   {
-    id: 'reparation-pc-domicile',
-    title: 'Dépannage PC “Ma machine marche mal !”',
-    img: "/images/services/depannage-pc-domicile.png",
-    alt: "Dépannage PC et optimisation",
+    id: "reparation-pc-domicile",
+    secondId: "sauvegarde-donnees",
+    title: "Dépannage PC “Ma machine marche mal !”",
+    img: "/images/services/depannage-pc-domicile-vesoul.webp",
+    alt: "Dépannage PC à domicile et optimisation logicielle",
     items: [
       "Diagnostic & dépannage logiciel (erreurs, lenteurs, plantages…)",
       "Nettoyage <strong>logiciel</strong> + optimisation (démarrage, programmes inutiles, mises à jour)",
@@ -23,10 +25,9 @@ const services = [
     ],
   },
   {
-
     title: "Internet / Wi-Fi / imprimante",
-    img: "/images/services/aide-wifi.png",
-    alt: "Wi-Fi, box internet, imprimante",
+    img: "/images/services/depannage-wifi-vesoul.webp",
+    alt: "Dépannage Wi-Fi, box internet, imprimante",
     items: [
       "Diagnostic et optimisation Wi-Fi / box / réseau domestique (répéteur, couverture, stabilité)",
       "Installation / configuration imprimante & scanner (USB ou Wi-Fi)",
@@ -34,22 +35,22 @@ const services = [
     ],
   },
   {
-    id: 'recuperation-de-donnees',
+    id: "recuperation-de-donnees",
     title: "Téléphones & tablettes",
-    img: "/images/services/telephone-tablette.jpg",
-    alt: "Téléphone et tablette",
+    img: "/images/services/depannage-telephone-tablette.webp",
+    alt: "Récupération de données sur téléphones et tablettes",
     items: [
       "Prise en main Android (réglages, stockage, applis utiles)",
       "Sauvegarde / transfert vers un nouveau téléphone (photos, contacts, WhatsApp, etc.)",
       "Nettoyage + remise à zéro (sauvegarde puis réinitialisation propre)",
-      "Récupération de données sur téléphone bloqué / écran cassé etc...", 
+      "Récupération de données sur téléphone bloqué / écran cassé etc...",
     ],
   },
   {
-    id:'assistance-numerique',
+    id: "assistance-numerique",
     title: "Cours et accompagnement (assistance, coaching, formations)",
-    img: "/images/services/cours-coaching.jpg",
-    alt: "Cours informatique et coaching",
+    img: "/images/services/cours-informatique-coaching.webp",
+    alt: "Cours informatique et coaching à domicile à Vesoul et ses environs",
     items: [
       "Cours “bases de l’informatique” (Windows, fichiers, Internet, emails)",
       "Coaching numérique seniors (à votre rythme, sans stress, sans jargon)",
@@ -60,8 +61,8 @@ const services = [
   },
   {
     title: "Développement web & outils sur mesure",
-    img: "/images/services/dev-web.jpg",
-    alt: "Développement web et outils",
+    img: "/images/services/creation-site-web-vesoul-pusey.webp",
+    alt: "Création de sites web  Vesoul / Pusey",
     items: [
       "Création de site vitrine / blog (WordPress / Astro…)",
       "Optimisation, maintenance et petits correctifs sur site existant",
@@ -71,10 +72,10 @@ const services = [
     ],
   },
   {
-    id:'cours-informatique',
+    id: "cours-informatique",
     title: "Divers (selon besoin)",
-    img: "/images/services/divers.jpg",
-    alt: "Aide numérique et conseils",
+    img: "/images/services/assistance-numerique-vesoul-pusey.webp",
+    alt: "Aide numérique et conseils Pusey / Vesoul / 70",
     items: [
       "Conseils avant achat (PC, imprimante, routeur…) : on choisit simple et adapté",
       "“Coup de main” numérique : je vous aide à comprendre et à faire, pas juste à cliquer",
@@ -83,52 +84,73 @@ const services = [
 ];
 ---
 
-<Main title={title} subTitle={subTitle} bannerImage={bannerImage} bannerHeight="24vh">
+<Main
+  title={title}
+  subTitle={subTitle}
+  bannerImage={bannerImage}
+  bannerHeight="24vh"
+>
   <div class="article-wrapper">
     <div class="article">
-
       <h1 class="svc-title">
-        <span class="svc-title-gradient">Réparation, assistance et formation informatique et numérique</span>
-       
+        <span class="svc-title-gradient"
+          >Réparation, assistance et formation informatique et numérique</span
+        >
       </h1>
 
       <p class="svc-intro">
-        Dépannage, installation, mise en place, coaching… Je m’adapte à votre besoin, sans jargon,
-        avec des solutions simples.
+        Dépannage, installation, mise en place, coaching… Je m’adapte à votre
+        besoin, sans jargon, avec des solutions simples.
       </p>
 
       <div class="svc-grid">
-        {services.map((s) => (
-          <section class="svc-card">
-            <div class="svc-media" aria-hidden="false">
-              <img src={s.img} alt={s.alt} loading="lazy" decoding="async" />
-            </div>
+        {
+          services.map((s) => (
+            <section class="svc-card">
+              <div class="svc-media" aria-hidden="false">
+                <img src={s.img} alt={s.alt} loading="lazy" decoding="async" />
+              </div>
 
-            <h2 class="svc-h2" id={s.id}>{s.title}</h2>
+              <h2 class="svc-h2" id={s.id}>
+                {s.secondId && (
+                  <span
+                    id={s.secondId}
+                    class="pointer-events-none absolute -mt-24"
+                  />
+                )}
+                {s.title}
+              </h2>
 
-            <ul class="svc-list">
-              {s.items.map((it) => <li class="svc-li" set:html={it} />)}
-            </ul>
+              <ul class="svc-list">
+                {s.items.map((it) => (
+                  <li class="svc-li" set:html={it} />
+                ))}
+              </ul>
 
-            <div class="svc-links">
-              <a class="svc-a" href="/contact/" title="Me contacter">Me contacter</a>
-              <span class="svc-dot">•</span>
-              <a class="svc-a" href="/tarifs" title="Voir les tarifs">Voir les tarifs</a>
-            </div>
-          </section>
-        ))}
+              <div class="svc-links">
+                <a class="svc-a" href="/contact/" title="Me contacter">
+                  Me contacter
+                </a>
+                <span class="svc-dot">•</span>
+                <a class="svc-a" href="/tarifs/" title="Voir les tarifs">
+                  Voir les tarifs
+                </a>
+              </div>
+            </section>
+          ))
+        }
       </div>
 
       <div class="svc-cta">
         <p class="svc-cta-text">
-          Vous hésitez ? Décrivez votre souci en 2 lignes, et je vous dis rapidement ce qui est possible.
+          Vous hésitez ? Décrivez votre souci en 2 lignes, et je vous dis
+          rapidement ce qui est possible.
         </p>
         <div class="svc-cta-actions">
           <a class="svc-cta-btn" href="/contact/">Me contacter</a>
-          <a class="svc-cta-a" href="/tarifs">Consulter les tarifs</a>
+          <a class="svc-cta-a" href="/tarifs/">Consulter les tarifs</a>
         </div>
       </div>
-
     </div>
   </div>
 </Main>
@@ -150,7 +172,9 @@ const services = [
   }
 </style>
 
-{/* Styles de la page SERVICES uniquement (scopés → ne touchent pas le footer). */}
+{
+  /* Styles de la page SERVICES uniquement (scopés → ne touchent pas le footer). */
+}
 <style>
   .svc-title {
     margin: 0 0 0.75rem 0;
@@ -158,8 +182,16 @@ const services = [
     letter-spacing: -0.02em;
     font-size: 1.75rem;
   }
-  @media (min-width: 768px) { .svc-title { font-size: 2.1rem; } }
-  @media (min-width: 1024px) { .svc-title { font-size: 2.4rem; } }
+  @media (min-width: 768px) {
+    .svc-title {
+      font-size: 2.1rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    .svc-title {
+      font-size: 2.4rem;
+    }
+  }
 
   .svc-title-gradient {
     background: linear-gradient(90deg, #60a5fa, #65a30d);
@@ -180,8 +212,14 @@ const services = [
     color: #374151;
     margin: 0;
   }
-  @media (min-width: 1024px) { .svc-intro { font-size: 1.25rem; } }
-  :global(.dark) .svc-intro { color: #9ca3af; }
+  @media (min-width: 1024px) {
+    .svc-intro {
+      font-size: 1.25rem;
+    }
+  }
+  :global(.dark) .svc-intro {
+    color: #9ca3af;
+  }
 
   .svc-grid {
     display: grid;
@@ -192,11 +230,10 @@ const services = [
   .svc-card {
     border-radius: 1rem;
     padding: 1.25rem;
-    border: 1px solid rgba(127,127,127,.18);
-    box-shadow: 0 1px 0 rgba(0,0,0,.03);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.03);
   }
   :global(.dark) .svc-card {
-    border-color: rgba(255,255,255,.10);
+    /* border removal */
   }
 
   .svc-media {
@@ -209,10 +246,9 @@ const services = [
     height: auto;
     max-width: 100%;
     border-radius: 1rem;
-    border: 1px solid rgba(127,127,127,.18);
   }
   :global(.dark) .svc-media img {
-    border-color: rgba(255,255,255,.10);
+    /* border removal */
   }
 
   .svc-h2 {
@@ -222,7 +258,9 @@ const services = [
     color: #111827;
     letter-spacing: -0.01em;
   }
-  :global(.dark) .svc-h2 { color: #fff; }
+  :global(.dark) .svc-h2 {
+    color: #fff;
+  }
 
   .svc-list {
     margin: 0.25rem 0 0;
@@ -235,51 +273,65 @@ const services = [
     font-size: 1.125rem;
     color: #374151;
   }
-  @media (min-width: 1024px) { .svc-li { font-size: 1.25rem; } }
-  :global(.dark) .svc-li { color: #9ca3af; }
-  .svc-li::marker { color: var(--primary-color, #3b82f6); }
+  @media (min-width: 1024px) {
+    .svc-li {
+      font-size: 1.25rem;
+    }
+  }
+  :global(.dark) .svc-li {
+    color: #9ca3af;
+  }
+  .svc-li::marker {
+    color: var(--primary-color, #3b82f6);
+  }
 
-.svc-links {
-  margin-top: 0.9rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
- text-align: center;
-  justify-content: center; /* ✅ centre "Me contacter • Voir les tarifs" */
-}
-  @media (min-width: 1024px) { .svc-links { font-size: 1.25rem; } }
+  .svc-links {
+    margin-top: 0.9rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    text-align: center;
+    justify-content: center; /* ✅ centre "Me contacter • Voir les tarifs" */
+  }
+  @media (min-width: 1024px) {
+    .svc-links {
+      font-size: 1.25rem;
+    }
+  }
 
   .svc-a {
     font-weight: 700;
     color: #2563eb;
     text-decoration: underline;
     text-underline-offset: 4px;
-    text-decoration-color: rgba(147,197,253,.7);
+    text-decoration-color: rgba(147, 197, 253, 0.7);
   }
   .svc-a:hover {
     color: #1d4ed8;
-    text-decoration-color: rgba(59,130,246,.9);
+    text-decoration-color: rgba(59, 130, 246, 0.9);
   }
   :global(.dark) .svc-a {
     color: #60a5fa;
-    text-decoration-color: rgba(59,130,246,.55);
+    text-decoration-color: rgba(59, 130, 246, 0.55);
   }
   :global(.dark) .svc-a:hover {
     color: #93c5fd;
-    text-decoration-color: rgba(147,197,253,.8);
+    text-decoration-color: rgba(147, 197, 253, 0.8);
   }
 
-  .svc-dot { opacity: .6; }
+  .svc-dot {
+    opacity: 0.6;
+  }
 
   .svc-cta {
     margin-top: 1.5rem;
     padding: 1.25rem;
     border-radius: 1rem;
-    background: rgba(59,130,246,.10);
+    background: rgba(59, 130, 246, 0.1);
   }
   :global(.dark) .svc-cta {
-    background: rgba(30,58,138,.25);
+    background: rgba(30, 58, 138, 0.25);
   }
 
   .svc-cta-text {
@@ -287,8 +339,14 @@ const services = [
     font-size: 1.125rem;
     color: #111827;
   }
-  @media (min-width: 1024px) { .svc-cta-text { font-size: 1.25rem; } }
-  :global(.dark) .svc-cta-text { color: #e5e7eb; }
+  @media (min-width: 1024px) {
+    .svc-cta-text {
+      font-size: 1.25rem;
+    }
+  }
+  :global(.dark) .svc-cta-text {
+    color: #e5e7eb;
+  }
 
   .svc-cta-actions {
     margin-top: 0.9rem;
@@ -305,11 +363,14 @@ const services = [
     border-radius: 0.9rem;
     padding: 0.6rem 1rem;
     font-weight: 800;
-    background: var(--primary-color, #3b82f6);
+    background: #2563eb;
     color: #fff;
     text-decoration: none;
   }
-  .svc-cta-btn:hover { opacity: .92; }
+  .svc-cta-btn:hover {
+    background: #1d4ed8;
+    opacity: 1;
+  }
 
   .svc-cta-a {
     font-weight: 700;
@@ -317,5 +378,7 @@ const services = [
     text-decoration: underline;
     text-underline-offset: 4px;
   }
-  :global(.dark_toggle) .svc-cta-a { color: #60a5fa; }
+  :global(.dark_toggle) .svc-cta-a {
+    color: #60a5fa;
+  }
 </style>
