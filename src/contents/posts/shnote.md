@@ -1,18 +1,17 @@
 ---
 title: "shnote : prendre des notes depuis son terminal"
 slug: "shnote-notes-depuis-terminal"
-image: /images/creations/shnote.jpg
+image: /images/blog/creations/shnote.jpg
 published: 2025-10-13
 description: "shnote c'est ma solution en bash pour prendre des notes depuis son terminal"
 tags: ["code", "creation", "bash", "script"]
 category: Créations
 licenseName: "Unlicensed"
 author: shantee
-sourceLink: "https:/zfx.fr"
 draft: false
 ---
 
-J’ai écrit **shnote** parce que j’avais besoin d’une façon **simple et rapide** de noter des idées directement dans le terminal.  
+J’ai écrit **shnote** à l'époque ou on codait encore sans l'IA parce que j’avais besoin d’une façon **simple et rapide** de noter des idées directement dans le terminal.  
 Pas de dépendances exotiques : c’est un **script Bash** léger, local, que l’on peut versionner et grepper facilement.
 
 ➡️ Dépôt : <https://github.com/shantee/shnote>

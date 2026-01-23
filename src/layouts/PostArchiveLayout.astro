@@ -12,13 +12,26 @@ export interface Props {
   subTitle?: string;
   bannerImage?: string;
   slug?: string;
+  mainTitle?: string;
 }
 
-const { archiveMap, title, subTitle, bannerImage, slug } = Astro.props;
+const { archiveMap, title, subTitle, bannerImage, slug, mainTitle } =
+  Astro.props;
 ---
 
 <Main title={title} subTitle={subTitle} bannerImage={bannerImage} slug={slug}>
   <div class="article-wrapper main-container">
+    <h1
+      class="mb-4 text-2xl font-extrabold text-gray-900 md:text-3xl lg:text-4xl dark:text-white"
+    >
+      <span
+        class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
+      >
+        {mainTitle || title}
+      </span>
+    </h1>
+    <br />
+    <br />
     {
       archiveMap.size !== 0 &&
         [...archiveMap.keys()].map((year) => (

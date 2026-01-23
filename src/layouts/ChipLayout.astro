@@ -12,13 +12,25 @@ export interface Props {
   subTitle?: string;
   bannerImage?: string;
   slug?: string;
+  mainTitle?: string;
 }
 
-const { chips, title, subTitle, bannerImage, slug } = Astro.props;
+const { chips, title, subTitle, bannerImage, slug, mainTitle } = Astro.props;
 ---
 
 <Main title={title} subTitle={subTitle} bannerImage={bannerImage} slug={slug}>
   <div class="flex flex-col rounded-2xl bg-[var(--card-color)] p-6">
+    <h1
+      class="mb-4 text-2xl font-extrabold text-gray-900 md:text-3xl lg:text-4xl dark:text-white"
+    >
+      <span
+        class="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"
+      >
+        {mainTitle || title}
+      </span>
+    </h1>
+    <br />
+    <br />
     <div class="grid grid-cols-1 gap-1 md:grid-cols-2 lg:grid-cols-3">
       {
         chips.map((chip) => (

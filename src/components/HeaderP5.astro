@@ -1,10 +1,18 @@
 ---
 const poster = "/images/header-poster.webp"; // fallback si motion réduite
 ---
+
 <section class="hero-anim" aria-label="Header animé p5">
   <!-- Canvas p5 -->
   <div id="p5-holder"></div>
-  <noscript><img src=/images/noscripts.jpg alt="" width="1920" height="1080" /></noscript>
+  <noscript
+    ><img
+      src="/images/noscripts.jpg"
+      alt="dépannage et assistance informatique Vesoul / Pusey "
+      width="1920"
+      height="1080"
+    /></noscript
+  >
 
   <!-- Vagues Yukina au-dessus -->
   <div class="waves" id="header-waves">
@@ -20,14 +28,34 @@ const poster = "/images/header-poster.webp"; // fallback si motion réduite
       <defs>
         <path
           id="gentle-wave"
-          d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z">
+          d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"
+        >
         </path>
       </defs>
       <g class="parallax">
-        <use xlink:href="#gentle-wave" x="48" y="0"  class="opacity-25" style={{ animationDelay: "-2s", animationDuration: "7s" }} />
-        <use xlink:href="#gentle-wave" x="48" y="3"  class="opacity-50" style={{ animationDelay: "-3s", animationDuration: "10s" }} />
-        <use xlink:href="#gentle-wave" x="48" y="5"  class="opacity-75" style={{ animationDelay: "-4s", animationDuration: "13s" }} />
-        <use xlink:href="#gentle-wave" x="48" y="7"                      style={{ animationDelay: "-5s", animationDuration: "20s" }} />
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="0"
+          class="opacity-25"
+          style={{ animationDelay: "-2s", animationDuration: "7s" }}></use>
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="3"
+          class="opacity-50"
+          style={{ animationDelay: "-3s", animationDuration: "10s" }}></use>
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="5"
+          class="opacity-75"
+          style={{ animationDelay: "-4s", animationDuration: "13s" }}></use>
+        <use
+          xlink:href="#gentle-wave"
+          x="48"
+          y="7"
+          style={{ animationDelay: "-5s", animationDuration: "20s" }}></use>
       </g>
     </svg>
   </div>
@@ -35,312 +63,400 @@ const poster = "/images/header-poster.webp"; // fallback si motion réduite
   <!-- p5 depuis CDN -->
   <script src="/scripts/q5.min.js" defer></script>
 
- <script is:inline>
-(() => {
-  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (REDUCED) { window.setup = () => {}; return; }
-
-  // ====== CONFIG & STATE ======
-  // Voiture
-  const CAR_URL = "/images/zfx-car.png";
-  let carImg, carX = 0, carW = 200, carH = 100;
-  let carSpeed = 80;               // px/s
-  let carBaseY = 0;
-  let carWrapped = false;
-
-  // Saut voiture (désactivé plus bas si tu laisses le bloc commenté)
-  let jump = { active:false, t:0, dur:0.6, h:0, cooldown:1.5, init:false };
-
-  // Icônes suiveuses
-  const ICON_URLS = [
-    "/images/pc.png",
-    "/images/linux.png",
-    "/images/windows.png",
-    "/images/pc-cute.png",
-    "/images/android.png"
-  ];
-  let followers = []; // {img,x,w,h,spacing,jump:{...}}
-
-  // Bannière texte
-  const BANNER_URL = "/images/headertext.png";
-  let bannerImg, bannerX = 0, bannerY = 0, bannerW = 1000, bannerH = 45;
-  let bannerSpeed = 120;           // px/s
-
-  // Orchestration
-  // 'run' = voiture et icônes, 'banner' = bannière seule (icônes figées), puis relance voiture
-  let stage = 'run';
-  let carStartCooldown = 0;        // délai avant redémarrage de la voiture après la bannière
-
-  // p5 state
-  let holder, cnv, dpr = 1;
-  let gridPhase = 0;
-  const GRID_SPEED = 0.09;
-
-  // ====== PRELOAD ======
-  window.preload = function () {
-    carImg    = loadImage(CAR_URL, () => {}, () => {});
-    bannerImg = loadImage(BANNER_URL, () => {}, () => {});
-    followers = ICON_URLS.map(u => ({
-      url: u,
-      img: loadImage(u, () => {}, () => {}),
-      x: 0, w: 0, h: 0, spacing: 1,
-      jump: { active:false, t:0, dur:0.5, h:0, cooldown: random(0.3,1.2) }
-    }));
-  };
-
-  function sizeToContainer() {
-    if (!holder) return;
-    const r = holder.getBoundingClientRect();
-    resizeCanvas(Math.max(1, r.width|0), Math.max(1, r.height|0));
-    computeLayout();
-  }
-
-  function computeLayout() {
-    // Voiture : largeur cible = 22% viewport (bornée) et scale 0.6 (comme ton essai)
-    const targetW = constrain(width * 0.22, 150, 520);
-    if (carImg?.width) {
-      const s = (targetW / carImg.width) * 0.6;
-      carW = carImg.width  * s;
-      carH = carImg.height * s;
-    } else {
-      carW = targetW * 0.6; carH = targetW * 0.45 * 0.6;
-    }
-
-    carBaseY = height * 0.578;
-    if (carX === 0) carX = -carW - 20;
-    if (!jump.init) { jump.cooldown = random(0.8, 2.0); jump.init = true; }
-
-    // Icônes : taille + position
-    const iconTargetH = carH * 0.55;
-    const spacing = carW * 0.35;
-    followers.forEach((f, i) => {
-      if (f.img?.width) {
-        const s = iconTargetH / f.img.height;
-        f.w = f.img.width * s;
-        f.h = iconTargetH;
-      } else {
-        f.w = iconTargetH; f.h = iconTargetH;
+  <script is:inline>
+    (() => {
+      const REDUCED = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (REDUCED) {
+        window.setup = () => {};
+        return;
       }
-      f.spacing = spacing;
-      if (stage === 'run' && carStartCooldown <= 0) {
-        // position standard (collées à la voiture)
-        f.x = carX - (i + 1) * spacing;
+
+      // ====== CONFIG & STATE ======
+      // Voiture
+      const CAR_URL = "/images/zfx-car.png";
+      let carImg,
+        carX = 0,
+        carW = 200,
+        carH = 100;
+      let carSpeed = 80; // px/s
+      let carBaseY = 0;
+      let carWrapped = false;
+
+      // Saut voiture (désactivé plus bas si tu laisses le bloc commenté)
+      let jump = {
+        active: false,
+        t: 0,
+        dur: 0.6,
+        h: 0,
+        cooldown: 1.5,
+        init: false,
+      };
+
+      // Icônes suiveuses
+      const ICON_URLS = [
+        "/images/pc.png",
+        "/images/linux.png",
+        "/images/windows.png",
+        "/images/pc-cute.png",
+        "/images/android.png",
+      ];
+      let followers = []; // {img,x,w,h,spacing,jump:{...}}
+
+      // Bannière texte
+      const BANNER_URL = "/images/headertext.png";
+      let bannerImg,
+        bannerX = 0,
+        bannerY = 0,
+        bannerW = 1000,
+        bannerH = 45;
+      let bannerSpeed = 120; // px/s
+
+      // Orchestration
+      // 'run' = voiture et icônes, 'banner' = bannière seule (icônes figées), puis relance voiture
+      let stage = "run";
+      let carStartCooldown = 0; // délai avant redémarrage de la voiture après la bannière
+
+      // p5 state
+      let holder,
+        cnv,
+        dpr = 1;
+      let gridPhase = 0;
+      const GRID_SPEED = 0.09;
+
+      // ====== PRELOAD ======
+      window.preload = function () {
+        carImg = loadImage(
+          CAR_URL,
+          () => {},
+          () => {},
+        );
+        bannerImg = loadImage(
+          BANNER_URL,
+          () => {},
+          () => {},
+        );
+        followers = ICON_URLS.map((u) => ({
+          url: u,
+          img: loadImage(
+            u,
+            () => {},
+            () => {},
+          ),
+          x: 0,
+          w: 0,
+          h: 0,
+          spacing: 1,
+          jump: {
+            active: false,
+            t: 0,
+            dur: 0.5,
+            h: 0,
+            cooldown: random(0.3, 1.2),
+          },
+        }));
+      };
+
+      function sizeToContainer() {
+        if (!holder) return;
+        const r = holder.getBoundingClientRect();
+        resizeCanvas(Math.max(1, r.width | 0), Math.max(1, r.height | 0));
+        computeLayout();
       }
-    });
 
-    // Bannière : hauteur ~48% de la voiture + position derrière les icônes
-    const tgtH = carH * 0.48;
-    if (bannerImg?.height) {
-      const s = tgtH / bannerImg.height;
-      bannerW = bannerImg.width * s;
-      bannerH = bannerImg.height * s;
-    } else {
-      const s = tgtH / 45; // fallback ratio 1000x45
-      bannerW = 1000 * s;
-      bannerH = 45 * s;
-    }
-    bannerY = carBaseY - bannerH - 2; // juste au-dessus du sol, derrière les icônes
-  }
-
-  // ====== SETUP / DRAW ======
-  window.setup = function () {
-    holder = document.getElementById('p5-holder');
-    const r = holder.getBoundingClientRect();
-    dpr = Math.min(2, window.devicePixelRatio || 1);
-   
-    cnv = createCanvas(Math.max(1, r.width|0), Math.max(1, r.height|0));
-    cnv.parent('p5-holder');
-     pixelDensity(dpr);
-    computeLayout();
-  };
-
-  window.windowResized = sizeToContainer;
-
-  window.draw = function () {
-    const dt = deltaTime / 1000;
-
-    drawBg();
-
-    gridPhase = (gridPhase + GRID_SPEED * dt) % 1;
-    const horizon = height * .55;
-    drawGridFloorBand(horizon, {
-      cols: 150, rows: 16,
-      bottomSpan: width * 10, topSpan: width * 1.8,
-      floorLift: 0, color: '#cbd0ff', glowAlpha: 70, lineAlpha: 210, phase: gridPhase
-    });
-
-    // Soleil + ligne
-    push();
-    translate(0, -12);
-    const r  = Math.min(width, height) * 0.228;
-    const rx = r * 2.55, ry = r;
-    vaporwaveSunCtxEllipse(width/2, height*0.55, rx, ry, Math.PI, {
-      bands: 7, gapMin: 3, gapMax: null, mode: 'bands',
-      top: '#ffffff00', bottom: '#ffffffee'
-    });
-    stroke('#7B169C'); strokeWeight(8);
-    line(0, height*0.583, width, height*0.583);
-    pop();
-
-    // Orchestration
-    if (stage === 'run') {
-      if (carStartCooldown > 0) {
-        carStartCooldown -= dt;
-        // pendant le cooldown: icônes visibles mais figées, voiture figée
-        updateAndDrawFollowers(dt, { freeze:true });
-        updateAndDrawCar(dt, true);
-      } else {
-        updateAndDrawFollowers(dt);
-        updateAndDrawCar(dt);
-        // quand tout a complètement quitté la droite, on lance la bannière
-        if (carX > width + carW + 180) {
-          stage = 'banner';
-          bannerX = -bannerW - 40; // démarre hors écran à gauche
-          carX = -carW - 20;       // replace la voiture à gauche, figée le temps de la bannière
+      function computeLayout() {
+        // Voiture : largeur cible = 22% viewport (bornée) et scale 0.6 (comme ton essai)
+        const targetW = constrain(width * 0.22, 150, 520);
+        if (carImg?.width) {
+          const s = (targetW / carImg.width) * 0.6;
+          carW = carImg.width * s;
+          carH = carImg.height * s;
+        } else {
+          carW = targetW * 0.6;
+          carH = targetW * 0.45 * 0.6;
         }
+
+        carBaseY = height * 0.578;
+        if (carX === 0) carX = -carW - 20;
+        if (!jump.init) {
+          jump.cooldown = random(0.8, 2.0);
+          jump.init = true;
+        }
+
+        // Icônes : taille + position
+        const iconTargetH = carH * 0.55;
+        const spacing = carW * 0.35;
+        followers.forEach((f, i) => {
+          if (f.img?.width) {
+            const s = iconTargetH / f.img.height;
+            f.w = f.img.width * s;
+            f.h = iconTargetH;
+          } else {
+            f.w = iconTargetH;
+            f.h = iconTargetH;
+          }
+          f.spacing = spacing;
+          if (stage === "run" && carStartCooldown <= 0) {
+            // position standard (collées à la voiture)
+            f.x = carX - (i + 1) * spacing;
+          }
+        });
+
+        // Bannière : hauteur ~48% de la voiture + position derrière les icônes
+        const tgtH = carH * 0.48;
+        if (bannerImg?.height) {
+          const s = tgtH / bannerImg.height;
+          bannerW = bannerImg.width * s;
+          bannerH = bannerImg.height * s;
+        } else {
+          const s = tgtH / 45; // fallback ratio 1000x45
+          bannerW = 1000 * s;
+          bannerH = 45 * s;
+        }
+        bannerY = carBaseY - bannerH - 2; // juste au-dessus du sol, derrière les icônes
       }
-    } else if (stage === 'banner') {
-      // ordre : bannière (derrière) -> icônes (devant, figées)
-      updateAndDrawBanner(dt);
-      updateAndDrawFollowers(dt, { freeze:true });
 
-      if (bannerX > width + 40) {
-        // bannière terminée : petit délai puis relance voiture
-        stage = 'run';
-        carStartCooldown = 0.6;
-        carWrapped = true; // followers se recaleront derrière la voiture au redémarrage
+      // ====== SETUP / DRAW ======
+      window.setup = function () {
+        holder = document.getElementById("p5-holder");
+        const r = holder.getBoundingClientRect();
+        dpr = Math.min(2, window.devicePixelRatio || 1);
+
+        cnv = createCanvas(Math.max(1, r.width | 0), Math.max(1, r.height | 0));
+        cnv.parent("p5-holder");
+        pixelDensity(dpr);
+        computeLayout();
+      };
+
+      window.windowResized = sizeToContainer;
+
+      window.draw = function () {
+        const dt = deltaTime / 1000;
+
+        drawBg();
+
+        gridPhase = (gridPhase + GRID_SPEED * dt) % 1;
+        const horizon = height * 0.55;
+        drawGridFloorBand(horizon, {
+          cols: 150,
+          rows: 16,
+          bottomSpan: width * 10,
+          topSpan: width * 1.8,
+          floorLift: 0,
+          color: "#cbd0ff",
+          glowAlpha: 70,
+          lineAlpha: 210,
+          phase: gridPhase,
+        });
+
+        // Soleil + ligne
+        push();
+        translate(0, -12);
+        const r = Math.min(width, height) * 0.228;
+        const rx = r * 2.55,
+          ry = r;
+        vaporwaveSunCtxEllipse(width / 2, height * 0.55, rx, ry, Math.PI, {
+          bands: 7,
+          gapMin: 3,
+          gapMax: null,
+          mode: "bands",
+          top: "#ffffff00",
+          bottom: "#ffffffee",
+        });
+        stroke("#7B169C");
+        strokeWeight(8);
+        line(0, height * 0.583, width, height * 0.583);
+        pop();
+
+        // Orchestration
+        if (stage === "run") {
+          if (carStartCooldown > 0) {
+            carStartCooldown -= dt;
+            // pendant le cooldown: icônes visibles mais figées, voiture figée
+            updateAndDrawFollowers(dt, { freeze: true });
+            updateAndDrawCar(dt, true);
+          } else {
+            updateAndDrawFollowers(dt);
+            updateAndDrawCar(dt);
+            // quand tout a complètement quitté la droite, on lance la bannière
+            if (carX > width + carW + 180) {
+              stage = "banner";
+              bannerX = -bannerW - 40; // démarre hors écran à gauche
+              carX = -carW - 20; // replace la voiture à gauche, figée le temps de la bannière
+            }
+          }
+        } else if (stage === "banner") {
+          // ordre : bannière (derrière) -> icônes (devant, figées)
+          updateAndDrawBanner(dt);
+          updateAndDrawFollowers(dt, { freeze: true });
+
+          if (bannerX > width + 40) {
+            // bannière terminée : petit délai puis relance voiture
+            stage = "run";
+            carStartCooldown = 0.6;
+            carWrapped = true; // followers se recaleront derrière la voiture au redémarrage
+          }
+        }
+      };
+
+      // ====== DESSINS DE FOND ======
+      function drawBg() {
+        const g = drawingContext.createLinearGradient(0, 0, 0, height);
+        g.addColorStop(0, "#043049");
+        g.addColorStop(1, "#e400e4");
+        drawingContext.fillStyle = g;
+        noStroke();
+        rect(0, 0, width, height);
       }
-    }
-  };
 
-  // ====== DESSINS DE FOND ======
-  function drawBg() {
-    const g = drawingContext.createLinearGradient(0,0,0,height);
-    g.addColorStop(0,'#043049');
-    g.addColorStop(1,'#e400e4');
-    drawingContext.fillStyle = g;
-    noStroke(); rect(0,0,width,height);
-  }
+      function vaporwaveSunCtxEllipse(cx, cy, rx, ry, angle, opts = {}) {
+        const bands = opts.bands ?? 9;
+        const gapMin = (opts.gapMin ?? 2) * dpr;
+        const gapMax = opts.gapMax ?? ry * 0.12;
+        const top = opts.top ?? "#ff7a18";
+        const bottom = opts.bottom ?? "#ffd84d";
+        const mode = opts.mode ?? "cut";
+        const alpha = opts.alpha ?? 0.9;
 
-  function vaporwaveSunCtxEllipse(cx, cy, rx, ry, angle, opts = {}) {
-    const bands  = opts.bands ?? 9;
-    const gapMin = (opts.gapMin ?? 2) * dpr;
-    const gapMax = opts.gapMax ?? ry * 0.12;
-    const top    = opts.top    ?? '#ff7a18';
-    const bottom = opts.bottom ?? '#ffd84d';
-    const mode   = opts.mode   ?? 'cut';
-    const alpha  = opts.alpha  ?? 0.9;
+        const ctx = drawingContext;
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(angle);
+        ctx.beginPath();
+        ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
+        ctx.clip();
 
-    const ctx = drawingContext;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(angle);
-    ctx.beginPath();
-    ctx.ellipse(0, 0, rx, ry, 0, 0, Math.PI * 2);
-    ctx.clip();
+        if (mode === "cut") {
+          const g = ctx.createLinearGradient(0, -ry, 0, ry);
+          g.addColorStop(0, top);
+          g.addColorStop(1, bottom);
+          ctx.fillStyle = g;
+          ctx.fillRect(-rx - 2, -ry - 2, 2 * rx + 4, 2 * ry + 4);
 
-    if (mode === 'cut') {
-      const g = ctx.createLinearGradient(0, -ry, 0, ry);
-      g.addColorStop(0, top); g.addColorStop(1, bottom);
-      ctx.fillStyle = g;
-      ctx.fillRect(-rx - 2, -ry - 2, 2 * rx + 4, 2 * ry + 4);
-
-      ctx.globalCompositeOperation = 'destination-out';
-      const startY = -ry * 0.05, endY = ry * 0.95;
-      for (let i = 0; i < bands; i++) {
-        const t = bands > 1 ? i / (bands - 1) : 0;
-        const y = lerp(startY, endY, t);
-        const h = lerp(gapMin, gapMax, t);
-        ctx.fillRect(-rx - 4, y, 2 * rx + 8, h);
+          ctx.globalCompositeOperation = "destination-out";
+          const startY = -ry * 0.05,
+            endY = ry * 0.95;
+          for (let i = 0; i < bands; i++) {
+            const t = bands > 1 ? i / (bands - 1) : 0;
+            const y = lerp(startY, endY, t);
+            const h = lerp(gapMin, gapMax, t);
+            ctx.fillRect(-rx - 4, y, 2 * rx + 8, h);
+          }
+          ctx.globalCompositeOperation = "source-over";
+        } else {
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = "#ffffff55";
+          const startY = -ry * 0.2,
+            endY = ry * 0.95;
+          for (let i = 0; i < bands; i++) {
+            const t = bands > 1 ? i / (bands - 1) : 0;
+            const y = lerp(startY, endY, t);
+            const h = lerp(gapMin, gapMax, t);
+            ctx.fillRect(-rx - 2, y, 2 * rx + 4, h);
+          }
+          ctx.globalAlpha = 1;
+        }
+        ctx.restore();
       }
-      ctx.globalCompositeOperation = 'source-over';
-    } else {
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = '#ffffff55';
-      const startY = -ry * 0.2, endY = ry * 0.95;
-      for (let i = 0; i < bands; i++) {
-        const t = bands > 1 ? i / (bands - 1) : 0;
-        const y = lerp(startY, endY, t);
-        const h = lerp(gapMin, gapMax, t);
-        ctx.fillRect(-rx - 2, y, 2 * rx + 4, h);
+
+      function drawGridFloorBand(horizonY, opts = {}) {
+        const cols = opts.cols ?? 24;
+        const rows = opts.rows ?? 18;
+        const powK = opts.powK ?? 1.9;
+        const col = color(opts.color || "#cbd0ff");
+        const glowA = opts.glowAlpha ?? 70;
+        const lineA = opts.lineAlpha ?? 210;
+
+        const centerShift = opts.centerShift ?? 0;
+        const mid = width * 0.5 + centerShift;
+
+        const bottomSpan = opts.bottomSpan ?? width * 1.35;
+        const topSpan = opts.topSpan ?? width * 0.4;
+        const yBottom = height - (opts.floorLift ?? 0);
+        const phase = (opts.phase ?? 0) % 1;
+
+        const x0b = mid - bottomSpan / 2;
+        const x0t = mid - topSpan / 2;
+        const stepB = bottomSpan / cols;
+        const stepT = topSpan / cols;
+
+        strokeCap(SQUARE);
+        strokeJoin(MITER);
+
+        strokeWeight(4.5);
+        stroke(red(col), green(col), blue(col), glowA);
+        for (let j = 0; j <= cols; j++) {
+          const xb = x0b + j * stepB;
+          const xt = x0t + j * stepT;
+          line(xb, yBottom, xt, horizonY);
+        }
+        strokeWeight(1.25);
+        stroke(red(col), green(col), blue(col), lineA);
+        for (let j = 0; j <= cols; j++) {
+          const xb = x0b + j * stepB;
+          const xt = x0t + j * stepT;
+          line(xb, yBottom, xt, horizonY);
+        }
+
+        const segs = _gridSegmentsBand(
+          horizonY,
+          yBottom,
+          x0b,
+          x0t,
+          stepB,
+          stepT,
+          cols,
+          rows,
+          powK,
+          phase,
+        );
+        strokeWeight(4.5);
+        stroke(red(col), green(col), blue(col), glowA);
+        for (const s of segs) line(s.l, s.y, s.r, s.y);
+        strokeWeight(1.25);
+        stroke(red(col), green(col), blue(col), lineA);
+        for (const s of segs) line(s.l, s.y, s.r, s.y);
       }
-      ctx.globalAlpha = 1;
-    }
-    ctx.restore();
-  }
 
-  function drawGridFloorBand(horizonY, opts = {}) {
-    const cols   = opts.cols ?? 24;
-    const rows   = opts.rows ?? 18;
-    const powK   = opts.powK ?? 1.9;
-    const col    = color(opts.color || '#cbd0ff');
-    const glowA  = opts.glowAlpha ?? 70;
-    const lineA  = opts.lineAlpha ?? 210;
+      function _gridSegmentsBand(
+        vy,
+        yBottom,
+        x0b,
+        x0t,
+        stepB,
+        stepT,
+        cols,
+        rows,
+        powK,
+        phase,
+      ) {
+        const segs = [];
+        for (let i = 0; i <= rows; i++) {
+          const ti = (i / rows + phase) % 1;
+          const t = pow(ti, powK);
+          const y = lerp(vy, yBottom, t);
+          const l = lerp(x0t, x0b, t);
+          const r = lerp(x0t + cols * stepT, x0b + cols * stepB, t);
+          segs.push({ y, l, r });
+        }
+        segs.sort((a, b) => a.y - b.y);
+        return segs;
+      }
 
-    const centerShift = opts.centerShift ?? 0;
-    const mid = width * 0.5 + centerShift;
+      // ====== ENTITÉS ======
+      function updateAndDrawCar(dt, freeze = false) {
+        if (!freeze) {
+          carX += carSpeed * dt;
+          if (carX > width + carW + 60) {
+            /* déclenché côté orchestrateur */
+          }
+        }
 
-    const bottomSpan = opts.bottomSpan ?? width * 1.35;
-    const topSpan    = opts.topSpan    ?? width * 0.40;
-    const yBottom    = height - (opts.floorLift ?? 0);
-    const phase      = (opts.phase ?? 0) % 1;
-
-    const x0b = mid - bottomSpan / 2;
-    const x0t = mid - topSpan / 2;
-    const stepB = bottomSpan / cols;
-    const stepT = topSpan / cols;
-
-    strokeCap(SQUARE);
-    strokeJoin(MITER);
-
-    strokeWeight(4.5);
-    stroke(red(col), green(col), blue(col), glowA);
-    for (let j = 0; j <= cols; j++) {
-      const xb = x0b + j * stepB;
-      const xt = x0t + j * stepT;
-      line(xb, yBottom, xt, horizonY);
-    }
-    strokeWeight(1.25);
-    stroke(red(col), green(col), blue(col), lineA);
-    for (let j = 0; j <= cols; j++) {
-      const xb = x0b + j * stepB;
-      const xt = x0t + j * stepT;
-      line(xb, yBottom, xt, horizonY);
-    }
-
-    const segs = _gridSegmentsBand(horizonY, yBottom, x0b, x0t, stepB, stepT, cols, rows, powK, phase);
-    strokeWeight(4.5);
-    stroke(red(col), green(col), blue(col), glowA);
-    for (const s of segs) line(s.l, s.y, s.r, s.y);
-    strokeWeight(1.25);
-    stroke(red(col), green(col), blue(col), lineA);
-    for (const s of segs) line(s.l, s.y, s.r, s.y);
-  }
-
-  function _gridSegmentsBand(vy, yBottom, x0b, x0t, stepB, stepT, cols, rows, powK, phase) {
-    const segs = [];
-    for (let i = 0; i <= rows; i++) {
-      const ti = (i / rows + phase) % 1;
-      const t  = pow(ti, powK);
-      const y  = lerp(vy, yBottom, t);
-      const l  = lerp(x0t, x0b, t);
-      const r  = lerp(x0t + cols * stepT, x0b + cols * stepB, t);
-      segs.push({ y, l, r });
-    }
-    segs.sort((a, b) => a.y - b.y);
-    return segs;
-  }
-
-  // ====== ENTITÉS ======
-  function updateAndDrawCar(dt, freeze = false) {
-    if (!freeze) {
-      carX += carSpeed * dt;
-      if (carX > width + carW + 60) { /* déclenché côté orchestrateur */ }
-    }
-
-    // (option) saut parabole — laissé commenté comme tu l’avais
-    let yOff = 0, elevation = 0;
-    /*
+        // (option) saut parabole — laissé commenté comme tu l’avais
+        let yOff = 0,
+          elevation = 0;
+        /*
     if (!freeze) {
       if (!jump.active) {
         jump.cooldown -= dt;
@@ -360,137 +476,169 @@ const poster = "/images/header-poster.webp"; // fallback si motion réduite
     }
     */
 
-    // ombre
-    noStroke();
-    const shadowNarrow = 1 - 0.35 * elevation;
-    const shadowAlpha  = 65 * (1 - 0.4 * elevation);
-    fill(0, 0, 0, shadowAlpha);
-    ellipse(carX + carW * 0.5, carBaseY + 4, carW * 0.6 * shadowNarrow, carH * 0.12 * shadowNarrow);
+        // ombre
+        noStroke();
+        const shadowNarrow = 1 - 0.35 * elevation;
+        const shadowAlpha = 65 * (1 - 0.4 * elevation);
+        fill(0, 0, 0, shadowAlpha);
+        ellipse(
+          carX + carW * 0.5,
+          carBaseY + 4,
+          carW * 0.6 * shadowNarrow,
+          carH * 0.12 * shadowNarrow,
+        );
 
-    // image voiture
-    if (carImg) {
-      // drawingContext.imageSmoothingEnabled = false; // pour rendu très pixel
-      image(carImg, carX, carBaseY - carH + yOff, carW, carH);
-      // drawingContext.imageSmoothingEnabled = true;
-    } else {
-      fill('#fffd'); rect(carX, carBaseY - carH + yOff, carW, carH, 6);
-    }
-  }
-
-  function updateAndDrawFollowers(dt, {freeze=false} = {}) {
-    // si on relance après bannière, recale uniquement quand non figé
-    if (!freeze && carWrapped) {
-      followers.forEach((f, i) => {
-        f.x = carX - (i + 1) * f.spacing;
-        f.jump.active = false;
-        f.jump.cooldown = random(0.2, 1.0);
-      });
-      carWrapped = false;
-    }
-
-    const followK = 7; // vitesse de rattrapage
-    followers.forEach((f, i) => {
-      if (!freeze) {
-        const targetX = carX - (i + 1) * f.spacing;
-        f.x += (targetX - f.x) * Math.min(1, followK * dt);
-      }
-
-      // petits sauts aléatoires (on garde même figées pour la vie)
-      if (!f.jump.active) {
-        f.jump.cooldown -= dt;
-        if (f.jump.cooldown <= 0) {
-          f.jump.active = true; f.jump.t = 0;
-          f.jump.dur = random(0.35, 0.65);
-          f.jump.h   = f.h * random(0.15, 0.35);
+        // image voiture
+        if (carImg) {
+          // drawingContext.imageSmoothingEnabled = false; // pour rendu très pixel
+          image(carImg, carX, carBaseY - carH + yOff, carW, carH);
+          // drawingContext.imageSmoothingEnabled = true;
+        } else {
+          fill("#fffd");
+          rect(carX, carBaseY - carH + yOff, carW, carH, 6);
         }
       }
 
-      let elev = 0, yOff = 0;
-      if (f.jump.active) {
-        const u = constrain(f.jump.t / f.jump.dur, 0, 1);
-        elev = 4 * u * (1 - u);
-        yOff = -f.jump.h * elev;
-        f.jump.t += dt;
-        if (u >= 1) { f.jump.active = false; f.jump.cooldown = random(0.6, 2.2); }
+      function updateAndDrawFollowers(dt, { freeze = false } = {}) {
+        // si on relance après bannière, recale uniquement quand non figé
+        if (!freeze && carWrapped) {
+          followers.forEach((f, i) => {
+            f.x = carX - (i + 1) * f.spacing;
+            f.jump.active = false;
+            f.jump.cooldown = random(0.2, 1.0);
+          });
+          carWrapped = false;
+        }
+
+        const followK = 7; // vitesse de rattrapage
+        followers.forEach((f, i) => {
+          if (!freeze) {
+            const targetX = carX - (i + 1) * f.spacing;
+            f.x += (targetX - f.x) * Math.min(1, followK * dt);
+          }
+
+          // petits sauts aléatoires (on garde même figées pour la vie)
+          if (!f.jump.active) {
+            f.jump.cooldown -= dt;
+            if (f.jump.cooldown <= 0) {
+              f.jump.active = true;
+              f.jump.t = 0;
+              f.jump.dur = random(0.35, 0.65);
+              f.jump.h = f.h * random(0.15, 0.35);
+            }
+          }
+
+          let elev = 0,
+            yOff = 0;
+          if (f.jump.active) {
+            const u = constrain(f.jump.t / f.jump.dur, 0, 1);
+            elev = 4 * u * (1 - u);
+            yOff = -f.jump.h * elev;
+            f.jump.t += dt;
+            if (u >= 1) {
+              f.jump.active = false;
+              f.jump.cooldown = random(0.6, 2.2);
+            }
+          }
+
+          // ombre
+          noStroke();
+          const shrink = 1 - 0.35 * elev;
+          fill(0, 0, 0, 55 * (1 - 0.35 * elev));
+          ellipse(
+            f.x + f.w * 0.5,
+            carBaseY + 4,
+            f.w * 0.55 * shrink,
+            f.h * 0.18 * shrink,
+          );
+
+          // icône
+          if (f.img) {
+            const prev = drawingContext.imageSmoothingEnabled;
+            drawingContext.imageSmoothingEnabled = false;
+            image(f.img, f.x, carBaseY - f.h + yOff, f.w, f.h);
+            drawingContext.imageSmoothingEnabled = prev;
+          } else {
+            fill("#fff8");
+            rect(f.x, carBaseY - f.h + yOff, f.w, f.h, 4);
+          }
+        });
       }
 
-      // ombre
-      noStroke();
-      const shrink = 1 - 0.35 * elev;
-      fill(0,0,0,55 * (1 - 0.35 * elev));
-      ellipse(f.x + f.w * 0.5, carBaseY + 4, f.w * 0.55 * shrink, f.h * 0.18 * shrink);
-
-      // icône
-      if (f.img) {
-        const prev = drawingContext.imageSmoothingEnabled;
-        drawingContext.imageSmoothingEnabled = false;
-        image(f.img, f.x, carBaseY - f.h + yOff, f.w, f.h);
-        drawingContext.imageSmoothingEnabled = prev;
-      } else {
-        fill('#fff8'); rect(f.x, carBaseY - f.h + yOff, f.w, f.h, 4);
+      function updateAndDrawBanner(dt) {
+        bannerX += bannerSpeed * dt;
+        if (bannerImg) {
+          const prev = drawingContext.imageSmoothingEnabled;
+          drawingContext.imageSmoothingEnabled = false; // look net
+          image(bannerImg, bannerX, bannerY, bannerW, bannerH);
+          drawingContext.imageSmoothingEnabled = prev;
+        } else {
+          // fallback rectangle si l'image n'est pas prête
+          noStroke();
+          fill(0, 0, 0, 160);
+          rect(bannerX, bannerY, bannerW, bannerH);
+        }
       }
-    });
-  }
 
-  function updateAndDrawBanner(dt) {
-    bannerX += bannerSpeed * dt;
-    if (bannerImg) {
-      const prev = drawingContext.imageSmoothingEnabled;
-      drawingContext.imageSmoothingEnabled = false; // look net
-      image(bannerImg, bannerX, bannerY, bannerW, bannerH);
-      drawingContext.imageSmoothingEnabled = prev;
-    } else {
-      // fallback rectangle si l'image n'est pas prête
-      noStroke(); fill(0,0,0,160);
-      rect(bannerX, bannerY, bannerW, bannerH);
-    }
-  }
-
-  window.addEventListener('beforeunload', () => {
-    try { if (typeof remove === 'function') remove(); } catch {}
-  });
-})();
-</script>
-
-
-
+      window.addEventListener("beforeunload", () => {
+        try {
+          if (typeof remove === "function") remove();
+        } catch {}
+      });
+    })();
+  </script>
 </section>
 
 <style>
-/* Même gabarit que Banner (utilise --banner-height) */
-.hero-anim{
-  @apply relative w-full;
-  @apply h-[calc(var(--banner-height)*3/4)] lg:h-[var(--banner-height)];
-  overflow:hidden;
-}
+  /* Même gabarit que Banner (utilise --banner-height) */
+  .hero-anim {
+    @apply relative w-full;
+    @apply h-[calc(var(--banner-height)*3/4)] lg:h-[var(--banner-height)];
+    overflow: hidden;
+  }
 
-/* Canvas p5 derrière, plein conteneur */
-#p5-holder, #p5-holder canvas{
-  position:absolute; inset:0; display:block; width:100%; height:100%;
-  z-index:0;
-}
+  /* Canvas p5 derrière, plein conteneur */
+  #p5-holder,
+  #p5-holder canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
 
-/* Vagues Yukina au-dessus (mêmes classes que Banner) */
-.hero-anim .waves{
-  @apply absolute -bottom-[1px] h-[10vh] w-full md:h-[15vh];
-  max-height: 9.375rem; min-height: 3.125rem;
-  z-index:10; pointer-events:none;
-}
+  /* Vagues Yukina au-dessus (mêmes classes que Banner) */
+  .hero-anim .waves {
+    @apply absolute -bottom-[1px] h-[10vh] w-full md:h-[15vh];
+    max-height: 9.375rem;
+    min-height: 3.125rem;
+    z-index: 10;
+    pointer-events: none;
+  }
 
-.hero-anim .waves > .parallax use{
-  @apply fill-[var(--background-color)];
-  animation: wave 25s cubic-bezier(0.5, 0.5, 0.45, 0.5) infinite;
-}
+  .hero-anim .waves > .parallax use {
+    @apply fill-[var(--background-color)];
+    animation: wave 25s cubic-bezier(0.5, 0.5, 0.45, 0.5) infinite;
+  }
 
-/* Keyframes identiques à Banner */
-@keyframes wave{
-  0%   { transform: translate3d(-90px, 0, 0); }
-  100% { transform: translate3d(85px, 0, 0); }
-}
+  /* Keyframes identiques à Banner */
+  @keyframes wave {
+    0% {
+      transform: translate3d(-90px, 0, 0);
+    }
+    100% {
+      transform: translate3d(85px, 0, 0);
+    }
+  }
 
-/* Accessibilité: fallback immobile */
-@media (prefers-reduced-motion: reduce){
-  #p5-holder{ display:none; }
-  .hero-anim{ background:url(/images/noscripts.jpg) center/cover no-repeat; }
-}
+  /* Accessibilité: fallback immobile */
+  @media (prefers-reduced-motion: reduce) {
+    #p5-holder {
+      display: none;
+    }
+    .hero-anim {
+      background: url(/images/noscripts.jpg) center/cover no-repeat;
+    }
+  }
 </style>

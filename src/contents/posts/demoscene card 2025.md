@@ -1,7 +1,7 @@
 ---
 title: "Mes cartes pour 'demoscene card exchange' de 2025"
 slug: "demoscene-card-exchange"
-image: /images/creations/carte-demoscene.jpg
+image: /images/blog/creations/carte-demoscene.jpg
 published: 2025-12-16
 description: "Bonne année 2026 et Joyeux noël...Mes cartes de voeux prêtes à partir aux quatre coins du monde! "
 tags: ["demoscene", "creation", "graphique"]
@@ -16,9 +16,13 @@ draft: false
 
 le recto ...
 
-![yeahh]( /images/creations/carte-shantee-2025.jpg)
+![yeahh]( /images/blog/creations/carte-shantee-2025.jpg)
 
 et le verso ... 
 
 
-![et le verso...]( /images/creations/cartes-shantee-2025-dos.jpg)
+![et le verso...]( /images/blog/creations/cartes-shantee-2025-dos.jpg)
+
+---
+
+Bonne année 2026 à tous !
